@@ -1,8 +1,9 @@
-class BankAccount (
+class BankAccount(
     val accountOwner: String,
     initialBalance: Double = 0.0,
     val accountType: AccountType = AccountType.SAVING
-) {
+) : Payable {
+
     companion object {
         const val MIN_INITIAL_BALANCE = 0.0
         const val CURRENCY = "AFN"
@@ -18,40 +19,58 @@ class BankAccount (
         get() = balance > 0.0
 
     val displayBalance: String
-        get() = "%.2f AFN".format(balance)
+        get() = "%.2f $CURRENCY".format(balance)
+
+    val accountTypeLabel: String
+        get() = when (accountType) {
+            AccountType.SAVING -> "Saving account"
+            AccountType.CURRENT -> "Current account"
+            AccountType.BUSINESS -> "Business account"
+        }
 
     init {
-        require(value = accountOwner.isNotBlank()) { "Account owner must not be blank" }
-        require(value = initialBalance >= MIN_INITIAL_BALANCE) { "Initial balance can't be negative" }
+        require(accountOwner.isNotBlank()) { "Account owner must not be blank" }
+        require(initialBalance >= MIN_INITIAL_BALANCE) { "Initial balance can't be negative" }
     }
 
-    fun deposit(amount: Double): Boolean {
-        if (amount > 0.0) {
-            this.balance += amount
-            return true
+    fun deposit(amount: Double): TransactionResult {
+        if (amount <= 0.0) {
+            return TransactionResult.Failed("Deposit amount must be positive")
         }
-        return false
+
+        balance += amount
+        return TransactionResult.Success(balance)
     }
 
-    fun withdraw(amount: Double): Boolean {
-        if (canWithdraw && amount <= this.balance) {
-            this.balance -= amount
-            return true
+    fun withdraw(amount: Double): TransactionResult {
+        if (amount <= 0.0) {
+            return TransactionResult.Failed("Withdraw amount must be positive")
         }
-        return false
+
+        if (amount > balance) {
+            return TransactionResult.Failed("Insufficient balance")
+        }
+
+        balance -= amount
+        return TransactionResult.Success(balance)
     }
 
-    fun printAccountType (accountType: AccountType) {
-        when (accountType) {
-            AccountType.SAVING -> println("Saving account")
-            AccountType.BUSINESS -> println("BUSINESS account")
-            AccountType.CURRENT -> println("Current account")
-        }
+    override fun pay(amount: Double): TransactionResult {
+        return withdraw(amount)
     }
 }
 
 enum class AccountType {
     SAVING,
     CURRENT,
-    BUSINESS,
+    BUSINESS
+}
+
+interface Payable {
+    fun pay(amount: Double): TransactionResult
+}
+
+sealed class TransactionResult {
+    data class Success(val newBalance: Double) : TransactionResult()
+    data class Failed(val reason: String) : TransactionResult()
 }
