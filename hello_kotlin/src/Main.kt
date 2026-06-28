@@ -1,4 +1,6 @@
 
 fun main() {
-    val account1 = BankAccount(accountOwner = "", balance = 100.0)
+    val account1 = BankAccount("Sajad Ali Tavakoli")
+    account1.deposit(amount = 1000.0)
+    println(account1.displayBalance)
 }
