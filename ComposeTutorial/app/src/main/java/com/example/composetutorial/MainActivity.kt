@@ -3,45 +3,35 @@ package com.example.composetutorial
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.composetutorial.ui.theme.ComposeTutorialTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContent {
-            ComposeTutorialTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
-            }
+            MessageCard(Message("Android", "Jetpack Compose"))
         }
     }
 }
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
+data class Message(val author: String, val body: String)
 
-@Preview(showBackground = true)
 @Composable
-fun GreetingPreview() {
-    ComposeTutorialTheme {
-        Greeting("Android")
+fun MessageCard(msg: Message) {
+    Row {
+        Image(
+            painter = painterResource(R.drawable.profile_picture),
+            contentDescription = "Contact profile picture"
+        )
+        Column {
+            Text(text = msg.author)
+            Text(text = msg.body)
+        }
     }
 }
