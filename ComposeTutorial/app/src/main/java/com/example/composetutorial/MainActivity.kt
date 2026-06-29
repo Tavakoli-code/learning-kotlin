@@ -1,5 +1,6 @@
 package com.example.composetutorial
 
+import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -21,6 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.composetutorial.ui.theme.ComposeTutorialTheme
 
@@ -73,14 +75,19 @@ fun MessageCard(msg: Message) {
     }
 }
 
-//@Preview
-//@Composable
-//fun PreviewMessageCard() {
-//    ComposeTutorialTheme {
-//        Surface {
-//            MessageCard(
-//                msg = Message("Lexi", "Take a look at Jetpack Compose, it's great!")
-//            )
-//        }
-//    }
-//}
+@Preview(name = "Light Mode")
+@Preview(
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+    showBackground = true,
+    name = "Dark Mode"
+)
+@Composable
+fun PreviewMessageCard() {
+    ComposeTutorialTheme {
+        Surface {
+            MessageCard(
+                msg = Message("Lexi", "Hey, take a look at Jetpack Compose, it's great!")
+            )
+        }
+    }
+}
