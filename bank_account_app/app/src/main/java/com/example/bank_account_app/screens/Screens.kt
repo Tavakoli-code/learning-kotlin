@@ -138,11 +138,7 @@ fun BankAccountScreen(modifier: Modifier = Modifier) {
         )
 
         Spacer(Modifier.height(32.dp))
-        Text(
-            text = resultMessage,
-            modifier = Modifier.fillMaxWidth(),
-            textAlign = TextAlign.Center
-        )
+        ResultMessage(message = resultMessage)
 
         Spacer(Modifier.height(50.dp))
         Text(
@@ -216,6 +212,14 @@ fun ActionButtons(
             Text(text = "Deposit")
         }
     }
+}
+@Composable
+fun ResultMessage(message: String) {
+    Text(
+        text = message,
+        modifier = Modifier.fillMaxWidth(),
+        textAlign = TextAlign.Center
+    )
 }
 @Composable
 fun TransactionItem(transaction: Transaction) {
