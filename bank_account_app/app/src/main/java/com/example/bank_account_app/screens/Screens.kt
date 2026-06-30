@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.clearText
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.Button
@@ -115,11 +116,7 @@ fun BankAccountScreen(modifier: Modifier = Modifier) {
 
         Spacer(Modifier.height(15.dp))
 
-        OutlinedTextField(
-            state = amountState,
-            label = { Text("Amount")},
-            modifier = Modifier.fillMaxWidth()
-        )
+        AmountInput(amountState = amountState)
 
         Spacer(Modifier.height(12.dp))
 
@@ -199,6 +196,14 @@ fun AccountHeader(owner: String, accountType: String, balance: String) {
     Text(text = "Owner: $owner")
     Text(text = "Type: $accountType")
     Text(text = "Balance: $balance")
+}
+@Composable
+fun AmountInput(amountState: TextFieldState) {
+    OutlinedTextField(
+        state = amountState,
+        label = { Text("Amount")},
+        modifier = Modifier.fillMaxWidth()
+    )
 }
 @Composable
 fun TransactionItem(transaction: Transaction) {
