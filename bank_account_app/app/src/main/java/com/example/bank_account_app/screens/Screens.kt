@@ -19,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.Font
@@ -29,7 +30,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.bank_account_app.R
 import com.example.bank_account_app.model.BankAccount
+import com.example.bank_account_app.model.Transaction
 import com.example.bank_account_app.model.TransactionResult
+import com.example.bank_account_app.model.TransactionType
 
 val AppFontFamily = FontFamily(
     Font(R.font.open_sans, FontWeight.Normal)
@@ -42,20 +45,18 @@ fun BankAccountScreen(modifier: Modifier = Modifier) {
     val account = remember {
         BankAccount("Sajad Ali Tavakoli", 150.0)
     }
+    val transactions = remember {
+        mutableStateListOf<Transaction>()
+    }
     var balanceText by remember {
         mutableStateOf(account.displayBalance)
-    }
-    var ownerText by remember {
-        mutableStateOf(account.accountOwner)
-    }
-    var accountTypeText by remember {
-        mutableStateOf(account.accountType)
     }
     val amountState = rememberTextFieldState()
 
     fun handleTransaction(
         action: (Double) -> TransactionResult,
-        successMessage: String
+        successMessage: String,
+        transactionType: TransactionType
     ) {
         val amount = amountState.text.toString().toDoubleOrNull()
 
@@ -68,6 +69,13 @@ fun BankAccountScreen(modifier: Modifier = Modifier) {
                     balanceText = account.displayBalance
                     resultMessage = successMessage
                     amountState.clearText()
+                    transactions.add(
+                        Transaction(
+                            type = transactionType,
+                            amount = amount,
+                            balanceAfter = result.newBalance
+                        )
+                    )
                 }
                 is TransactionResult.Failed -> {
                     resultMessage = result.reason
@@ -92,8 +100,8 @@ fun BankAccountScreen(modifier: Modifier = Modifier) {
 
         Spacer(Modifier.height(8.dp))
 
-        Text(text = "Owner: $ownerText")
-        Text(text = "Type: $accountTypeText")
+        Text(text = "Owner: ${account.accountOwner}")
+        Text(text = "Type: ${account.accountType}")
         Text(text = "Balance: $balanceText")
 
         Spacer(Modifier.height(15.dp))
@@ -116,7 +124,8 @@ fun BankAccountScreen(modifier: Modifier = Modifier) {
                 onClick = {
                     handleTransaction(
                         action = account::withdraw,
-                        successMessage = "Withdraw successful"
+                        successMessage = "Withdraw successful",
+                        transactionType = TransactionType.WITHDRAW
                     )
                 },
                 modifier = Modifier
@@ -130,7 +139,8 @@ fun BankAccountScreen(modifier: Modifier = Modifier) {
                 onClick = {
                     handleTransaction(
                         action = account::deposit,
-                        successMessage = "Deposit successful"
+                        successMessage = "Deposit successful",
+                        transactionType = TransactionType.DEPOSIT
                     )
                 },
                 modifier = Modifier
