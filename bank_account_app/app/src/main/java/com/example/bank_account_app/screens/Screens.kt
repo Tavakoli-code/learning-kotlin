@@ -141,32 +141,10 @@ fun BankAccountScreen(modifier: Modifier = Modifier) {
         ResultMessage(message = resultMessage)
 
         Spacer(Modifier.height(50.dp))
-        Text(
-            text = "Transaction History",
-            style = MaterialTheme.typography.titleMedium,
-            textAlign = TextAlign.Center,
-            fontSize = 20.sp,
-            modifier = Modifier.fillMaxWidth()
+        TransactionHistory(
+            transactions = transactions,
+            modifier = Modifier.weight(1F)
         )
-        if (transactions.isEmpty()) {
-            Text(
-                text = "No transactions yet",
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .padding(top = 30.dp)
-                    .fillMaxWidth()
-            )
-        } else {
-            LazyColumn(
-                modifier = Modifier
-                    .weight(1F)
-                    .padding(top = 10.dp)
-            ) {
-                items(transactions) { transaction ->
-                    TransactionItem(transaction)
-                }
-            }
-        }
     }
 }
 
@@ -176,6 +154,7 @@ fun AccountHeader(owner: String, accountType: String, balance: String) {
     Text(text = "Type: $accountType")
     Text(text = "Balance: $balance")
 }
+
 @Composable
 fun AmountInput(amountState: TextFieldState) {
     OutlinedTextField(
@@ -184,11 +163,9 @@ fun AmountInput(amountState: TextFieldState) {
         modifier = Modifier.fillMaxWidth()
     )
 }
+
 @Composable
-fun ActionButtons(
-    onWithdrawClick: () -> Unit,
-    onDepositClick: () -> Unit
-) {
+fun ActionButtons(onWithdrawClick: () -> Unit, onDepositClick: () -> Unit) {
     Row(
         horizontalArrangement = Arrangement.SpaceEvenly,
         modifier = Modifier.fillMaxWidth()
@@ -213,6 +190,7 @@ fun ActionButtons(
         }
     }
 }
+
 @Composable
 fun ResultMessage(message: String) {
     Text(
@@ -221,6 +199,35 @@ fun ResultMessage(message: String) {
         textAlign = TextAlign.Center
     )
 }
+
+@Composable
+fun TransactionHistory(transactions: List<Transaction>, modifier: Modifier = Modifier) {
+    Text(
+        text = "Transaction History",
+        style = MaterialTheme.typography.titleMedium,
+        textAlign = TextAlign.Center,
+        fontSize = 20.sp,
+        modifier = Modifier.fillMaxWidth()
+    )
+    if (transactions.isEmpty()) {
+        Text(
+            text = "No transactions yet",
+            textAlign = TextAlign.Center,
+            modifier = Modifier
+                .padding(top = 30.dp)
+                .fillMaxWidth()
+        )
+    } else {
+        LazyColumn(
+            modifier = modifier
+        ) {
+            items(transactions) { transaction ->
+                TransactionItem(transaction)
+            }
+        }
+    }
+}
+
 @Composable
 fun TransactionItem(transaction: Transaction) {
     Card(
