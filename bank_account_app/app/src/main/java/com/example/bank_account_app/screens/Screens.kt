@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.text.input.clearText
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
@@ -52,6 +53,29 @@ fun BankAccountScreen(modifier: Modifier = Modifier) {
     }
     val amountState = rememberTextFieldState()
 
+    fun handleTransaction(
+        action: (Double) -> TransactionResult,
+        successMessage: String
+    ) {
+        val amount = amountState.text.toString().toDoubleOrNull()
+
+        if (amount == null) {
+            resultMessage = "Please enter a valid amount"
+            return
+        } else {
+            when (val result = action(amount)) {
+                is TransactionResult.Success -> {
+                    balanceText = account.displayBalance
+                    resultMessage = successMessage
+                    amountState.clearText()
+                }
+                is TransactionResult.Failed -> {
+                    resultMessage = result.reason
+                }
+            }
+        }
+    }
+
     Column(
         modifier = modifier
             .padding(16.dp)
@@ -90,20 +114,10 @@ fun BankAccountScreen(modifier: Modifier = Modifier) {
 //            WITHDRAW BUTTON
             Button(
                 onClick = {
-                    val amount = amountState.text.toString().toDoubleOrNull()
-                    if (amount == null) {
-                        resultMessage = "Please enter a valid amount"
-                    } else {
-                        when (val result = account.withdraw(amount)) {
-                            is TransactionResult.Success -> {
-                                balanceText = account.displayBalance
-                                resultMessage = "Withdraw successful"
-                            }
-                            is TransactionResult.Failed -> {
-                                resultMessage = result.reason
-                            }
-                        }
-                    }
+                    handleTransaction(
+                        action = account::withdraw,
+                        successMessage = "Withdraw successful"
+                    )
                 },
                 modifier = Modifier
                     .width(110.dp)
@@ -114,20 +128,10 @@ fun BankAccountScreen(modifier: Modifier = Modifier) {
 //            DEPOSIT BUTTON
             Button(
                 onClick = {
-                    val amount = amountState.text.toString().toDoubleOrNull()
-                    if (amount == null) {
-                        resultMessage = "Please enter a valid amount"
-                    } else {
-                        when (val result = account.deposit(amount)) {
-                            is TransactionResult.Success -> {
-                                balanceText = account.displayBalance
-                                resultMessage = "Deposit successful"
-                            }
-                            is TransactionResult.Failed -> {
-                                resultMessage = result.reason
-                            }
-                        }
-                    }
+                    handleTransaction(
+                        action = account::deposit,
+                        successMessage = "Deposit successful"
+                    )
                 },
                 modifier = Modifier
                     .width(110.dp)
