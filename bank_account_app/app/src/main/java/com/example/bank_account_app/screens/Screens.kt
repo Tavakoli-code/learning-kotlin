@@ -19,7 +19,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -37,6 +36,7 @@ fun BankAccountScreen(modifier: Modifier = Modifier) {
     var resultMessage by remember {
         mutableStateOf("Result will appear here")
     }
+    val amountState = rememberTextFieldState()
 
     Column(
         modifier = modifier
@@ -60,16 +60,18 @@ fun BankAccountScreen(modifier: Modifier = Modifier) {
 
         Spacer(Modifier.height(15.dp))
 
+        OutlinedTextField(
+            state = amountState,
+            label = { Text("Amount")},
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(Modifier.height(12.dp))
+
         Row(
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceEvenly,
             modifier = Modifier.fillMaxWidth()
         ) {
-            OutlinedTextField(
-                state = rememberTextFieldState(),
-                label = { Text("Withdraw amount")},
-                modifier = Modifier.weight(1F)
-            )
             Button(
                 onClick = {
                     resultMessage = "Withdraw clicked"
@@ -79,20 +81,7 @@ fun BankAccountScreen(modifier: Modifier = Modifier) {
             ) {
                 Text(text = "Withdraw")
             }
-        }
 
-        Spacer(Modifier.height(12.dp))
-
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            OutlinedTextField(
-                state = rememberTextFieldState(),
-                label = { Text("Deposit amount") },
-                modifier = Modifier.weight(1F)
-            )
             Button(
                 onClick = {
                     resultMessage = "Deposit clicked"
