@@ -39,6 +39,10 @@ import com.example.bank_account_app.model.TransactionType
 val AppFontFamily = FontFamily(
     Font(R.font.open_sans, FontWeight.Normal)
 )
+
+fun formatAmount(amount: Double): String {
+    return "%.2f AFN".format(amount)
+}
 @Composable
 fun BankAccountScreen(modifier: Modifier = Modifier) {
     var resultMessage by remember {
@@ -103,7 +107,7 @@ fun BankAccountScreen(modifier: Modifier = Modifier) {
         Spacer(Modifier.height(8.dp))
 
         Text(text = "Owner: ${account.accountOwner}")
-        Text(text = "Type: ${account.accountType}")
+        Text(text = "Type: ${account.accountTypeLabel}")
         Text(text = "Balance: $balanceText")
 
         Spacer(Modifier.height(15.dp))
@@ -167,13 +171,37 @@ fun BankAccountScreen(modifier: Modifier = Modifier) {
         if (transactions.isEmpty()) {
             Text( text = "No transactions yet")
         } else {
-            LazyColumn {
+            LazyColumn(
+                modifier = Modifier.weight(1F)
+            ) {
                 items(transactions) { transaction ->
-                    Text(
-                        text = "${transaction.type} - ${transaction.amount} - ${transaction.balanceAfter}"
-                    )
+                    TransactionItem(transaction)
                 }
             }
         }
+    }
+}
+
+@Composable
+fun TransactionItem(transaction: Transaction) {
+    Row(
+        horizontalArrangement = Arrangement.SpaceEvenly,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Text(
+            text = when (transaction.type) {
+                TransactionType.DEPOSIT -> "Deposit"
+                TransactionType.WITHDRAW -> "Withdraw"
+            },
+            modifier = Modifier.weight(1F)
+        )
+        Text(
+            text = formatAmount(transaction.amount),
+            modifier = Modifier.weight(1F)
+        )
+        Text(
+            text = formatAmount(transaction.balanceAfter),
+            modifier = Modifier.weight(1F)
+        )
     }
 }
