@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.input.clearText
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -184,24 +185,31 @@ fun BankAccountScreen(modifier: Modifier = Modifier) {
 
 @Composable
 fun TransactionItem(transaction: Transaction) {
-    Row(
-        horizontalArrangement = Arrangement.SpaceEvenly,
-        modifier = Modifier.fillMaxWidth()
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp)
     ) {
-        Text(
-            text = when (transaction.type) {
-                TransactionType.DEPOSIT -> "Deposit"
-                TransactionType.WITHDRAW -> "Withdraw"
-            },
-            modifier = Modifier.weight(1F)
-        )
-        Text(
-            text = formatAmount(transaction.amount),
-            modifier = Modifier.weight(1F)
-        )
-        Text(
-            text = formatAmount(transaction.balanceAfter),
-            modifier = Modifier.weight(1F)
-        )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(12.dp)
+        ) {
+            Text(
+                text = when (transaction.type) {
+                    TransactionType.DEPOSIT -> "Deposit"
+                    TransactionType.WITHDRAW -> "Withdraw"
+                },
+                modifier = Modifier.weight(1F)
+            )
+            Text(
+                text = formatAmount(transaction.amount),
+                modifier = Modifier.weight(1F)
+            )
+            Text(
+                text = formatAmount(transaction.balanceAfter),
+                modifier = Modifier.weight(1F)
+            )
+        }
     }
 }
