@@ -107,9 +107,11 @@ fun BankAccountScreen(modifier: Modifier = Modifier) {
 
         Spacer(Modifier.height(8.dp))
 
-        Text(text = "Owner: ${account.accountOwner}")
-        Text(text = "Type: ${account.accountTypeLabel}")
-        Text(text = "Balance: $balanceText")
+        AccountHeader(
+            owner = account.accountOwner,
+            accountType = account.accountTypeLabel,
+            balance = balanceText
+        )
 
         Spacer(Modifier.height(15.dp))
 
@@ -164,13 +166,22 @@ fun BankAccountScreen(modifier: Modifier = Modifier) {
             textAlign = TextAlign.Center
         )
 
-        Spacer(Modifier.height(32.dp))
+        Spacer(Modifier.height(50.dp))
         Text(
             text = "Transaction History",
-            style = MaterialTheme.typography.titleMedium
+            style = MaterialTheme.typography.titleMedium,
+            textAlign = TextAlign.Center,
+            fontSize = 20.sp,
+            modifier = Modifier.fillMaxWidth()
         )
         if (transactions.isEmpty()) {
-            Text( text = "No transactions yet")
+            Text(
+                text = "No transactions yet",
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .padding(top = 30.dp)
+                    .fillMaxWidth()
+            )
         } else {
             LazyColumn(
                 modifier = Modifier.weight(1F)
@@ -183,6 +194,12 @@ fun BankAccountScreen(modifier: Modifier = Modifier) {
     }
 }
 
+@Composable
+fun AccountHeader(owner: String, accountType: String, balance: String) {
+    Text(text = "Owner: $owner")
+    Text(text = "Type: $accountType")
+    Text(text = "Balance: $balance")
+}
 @Composable
 fun TransactionItem(transaction: Transaction) {
     Card(
