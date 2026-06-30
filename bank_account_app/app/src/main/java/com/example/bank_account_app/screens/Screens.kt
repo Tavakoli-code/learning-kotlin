@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.input.clearText
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.Button
@@ -156,5 +158,22 @@ fun BankAccountScreen(modifier: Modifier = Modifier) {
             modifier = Modifier.fillMaxWidth(),
             textAlign = TextAlign.Center
         )
+
+        Spacer(Modifier.height(32.dp))
+        Text(
+            text = "Transaction History",
+            style = MaterialTheme.typography.titleMedium
+        )
+        if (transactions.isEmpty()) {
+            Text( text = "No transactions yet")
+        } else {
+            LazyColumn {
+                items(transactions) { transaction ->
+                    Text(
+                        text = "${transaction.type} - ${transaction.amount} - ${transaction.balanceAfter}"
+                    )
+                }
+            }
+        }
     }
 }
