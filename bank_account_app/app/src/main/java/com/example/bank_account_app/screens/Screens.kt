@@ -27,6 +27,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.bank_account_app.R
+import com.example.bank_account_app.model.BankAccount
 
 val AppFontFamily = FontFamily(
     Font(R.font.open_sans, FontWeight.Normal)
@@ -35,6 +36,18 @@ val AppFontFamily = FontFamily(
 fun BankAccountScreen(modifier: Modifier = Modifier) {
     var resultMessage by remember {
         mutableStateOf("Result will appear here")
+    }
+    val account = remember {
+        BankAccount("Sajad Ali Tavakoli", 150.0)
+    }
+    var balanceText by remember {
+        mutableStateOf(account.displayBalance)
+    }
+    var ownerText by remember {
+        mutableStateOf(account.accountOwner)
+    }
+    var accountTypeText by remember {
+        mutableStateOf(account.accountType)
     }
     val amountState = rememberTextFieldState()
 
@@ -54,9 +67,9 @@ fun BankAccountScreen(modifier: Modifier = Modifier) {
 
         Spacer(Modifier.height(8.dp))
 
-        Text(text = "Owner: Ali")
-        Text(text = "Type: Savings")
-        Text(text = "Balance: 100.00 AFN")
+        Text(text = "Owner: $ownerText")
+        Text(text = "Type: $accountTypeText")
+        Text(text = "Balance: $balanceText")
 
         Spacer(Modifier.height(15.dp))
 
