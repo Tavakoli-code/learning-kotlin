@@ -120,41 +120,22 @@ fun BankAccountScreen(modifier: Modifier = Modifier) {
 
         Spacer(Modifier.height(12.dp))
 
-        Row(
-            horizontalArrangement = Arrangement.SpaceEvenly,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-
-//            WITHDRAW BUTTON
-            Button(
-                onClick = {
-                    handleTransaction(
-                        action = account::withdraw,
-                        successMessage = "Withdraw successful",
-                        transactionType = TransactionType.WITHDRAW
-                    )
-                },
-                modifier = Modifier
-                    .width(110.dp)
-            ) {
-                Text(text = "Withdraw")
+        ActionButtons(
+            onWithdrawClick = {
+                handleTransaction(
+                    action = account::withdraw,
+                    successMessage = "Withdraw successful",
+                    transactionType = TransactionType.DEPOSIT
+                )
+            },
+            onDepositClick = {
+                handleTransaction(
+                    action = account::deposit,
+                    successMessage = "Deposit successful",
+                    transactionType = TransactionType.DEPOSIT
+                )
             }
-
-//            DEPOSIT BUTTON
-            Button(
-                onClick = {
-                    handleTransaction(
-                        action = account::deposit,
-                        successMessage = "Deposit successful",
-                        transactionType = TransactionType.DEPOSIT
-                    )
-                },
-                modifier = Modifier
-                    .width(110.dp)
-            ) {
-                Text(text = "Deposit")
-            }
-        }
+        )
 
         Spacer(Modifier.height(32.dp))
         Text(
@@ -181,7 +162,9 @@ fun BankAccountScreen(modifier: Modifier = Modifier) {
             )
         } else {
             LazyColumn(
-                modifier = Modifier.weight(1F)
+                modifier = Modifier
+                    .weight(1F)
+                    .padding(top = 10.dp)
             ) {
                 items(transactions) { transaction ->
                     TransactionItem(transaction)
@@ -204,6 +187,35 @@ fun AmountInput(amountState: TextFieldState) {
         label = { Text("Amount")},
         modifier = Modifier.fillMaxWidth()
     )
+}
+@Composable
+fun ActionButtons(
+    onWithdrawClick: () -> Unit,
+    onDepositClick: () -> Unit
+) {
+    Row(
+        horizontalArrangement = Arrangement.SpaceEvenly,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+
+//            WITHDRAW BUTTON
+        Button(
+            onClick = onWithdrawClick,
+            modifier = Modifier
+                .width(110.dp)
+        ) {
+            Text(text = "Withdraw")
+        }
+
+//            DEPOSIT BUTTON
+        Button(
+            onClick = onDepositClick,
+            modifier = Modifier
+                .width(110.dp)
+        ) {
+            Text(text = "Deposit")
+        }
+    }
 }
 @Composable
 fun TransactionItem(transaction: Transaction) {
