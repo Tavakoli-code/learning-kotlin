@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.bank_account_app.R
 import com.example.bank_account_app.model.BankAccount
+import com.example.bank_account_app.model.TransactionResult
 
 val AppFontFamily = FontFamily(
     Font(R.font.open_sans, FontWeight.Normal)
@@ -97,7 +98,21 @@ fun BankAccountScreen(modifier: Modifier = Modifier) {
 
             Button(
                 onClick = {
-                    resultMessage = "Deposit clicked"
+                    val amount = amountState.text.toString().toDoubleOrNull()
+                    if (amount == null) {
+                        resultMessage = "Please enter a valid amount"
+                    } else {
+                        val result = account.deposit(amount)
+                        when (result) {
+                            is TransactionResult.Success -> {
+                                balanceText = account.displayBalance
+                                resultMessage = "Deposit successful"
+                            }
+                            is TransactionResult.Failed -> {
+                                resultMessage = result.reason
+                            }
+                        }
+                    }
                 },
                 modifier = Modifier
                     .width(110.dp)
