@@ -86,9 +86,24 @@ fun BankAccountScreen(modifier: Modifier = Modifier) {
             horizontalArrangement = Arrangement.SpaceEvenly,
             modifier = Modifier.fillMaxWidth()
         ) {
+
+//            WITHDRAW BUTTON
             Button(
                 onClick = {
-                    resultMessage = "Withdraw clicked"
+                    val amount = amountState.text.toString().toDoubleOrNull()
+                    if (amount == null) {
+                        resultMessage = "Please enter a valid amount"
+                    } else {
+                        when (val result = account.withdraw(amount)) {
+                            is TransactionResult.Success -> {
+                                balanceText = account.displayBalance
+                                resultMessage = "Withdraw successful"
+                            }
+                            is TransactionResult.Failed -> {
+                                resultMessage = result.reason
+                            }
+                        }
+                    }
                 },
                 modifier = Modifier
                     .width(110.dp)
@@ -96,14 +111,14 @@ fun BankAccountScreen(modifier: Modifier = Modifier) {
                 Text(text = "Withdraw")
             }
 
+//            DEPOSIT BUTTON
             Button(
                 onClick = {
                     val amount = amountState.text.toString().toDoubleOrNull()
                     if (amount == null) {
                         resultMessage = "Please enter a valid amount"
                     } else {
-                        val result = account.deposit(amount)
-                        when (result) {
+                        when (val result = account.deposit(amount)) {
                             is TransactionResult.Success -> {
                                 balanceText = account.displayBalance
                                 resultMessage = "Deposit successful"
