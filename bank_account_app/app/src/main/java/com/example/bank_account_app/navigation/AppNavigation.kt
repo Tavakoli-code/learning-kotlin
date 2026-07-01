@@ -36,6 +36,11 @@ fun AppNavigation(modifier: Modifier = Modifier) {
                 transactions = bankAccountViewModel.uiState.transactions,
                 onBackClick = {
                     navController.popBackStack()
+                },
+                onTransactionClick = { index ->
+                    navController.navigate(
+                        AppRoutes.transactionDetailRoute(index)
+                    )
                 }
             )
         }

@@ -23,7 +23,8 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun TransactionHistoryScreen(
     transactions: List<Transaction>,
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    onTransactionClick: (Int) -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -55,7 +56,8 @@ fun TransactionHistoryScreen(
         ) {
             TransactionHistory(
                 transactions = transactions,
-                modifier = Modifier.weight(1F)
+                modifier = Modifier.weight(1F),
+                onTransactionClick = onTransactionClick
             )
         }
     }
