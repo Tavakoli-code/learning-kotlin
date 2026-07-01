@@ -8,8 +8,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
+import com.example.bank_account_app.navigation.AppNavigation
 import com.example.bank_account_app.ui.theme.Bank_account_appTheme
-import com.example.bank_account_app.screens.BankAccountScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -18,7 +18,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             Bank_account_appTheme {
                 Scaffold( modifier = Modifier.fillMaxSize() ) { innerPadding ->
-                    BankAccountScreen(
+                    AppNavigation(
                         modifier = Modifier.padding(innerPadding)
                     )
                 }
