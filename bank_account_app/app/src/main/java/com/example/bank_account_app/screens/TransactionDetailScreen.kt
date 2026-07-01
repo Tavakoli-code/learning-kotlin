@@ -4,25 +4,20 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import com.example.bank_account_app.model.Transaction
-import com.example.bank_account_app.screens.components.TransactionHistory
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import com.example.bank_account_app.model.Transaction
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TransactionHistoryScreen(
-    transactions: List<Transaction>,
+fun TransactionDetailScreen(
+    transaction: Transaction?,
     onBackClick: () -> Unit
 ) {
     Scaffold(
@@ -30,7 +25,7 @@ fun TransactionHistoryScreen(
             CenterAlignedTopAppBar(
                 title = {
                     Text(
-                        text = "Transaction History",
+                        text = "Transaction Detail",
                         fontWeight = FontWeight.Bold,
                         fontFamily = AppFontFamily,
                     )
@@ -53,10 +48,13 @@ fun TransactionHistoryScreen(
                 .padding(horizontal = 16.dp)
                 .fillMaxSize()
         ) {
-            TransactionHistory(
-                transactions = transactions,
-                modifier = Modifier.weight(1F)
-            )
+            if (transaction == null) {
+                Text(text = "Transaction detail not found")
+            } else {
+                Text(text = "Transaction type: ${transaction.type}")
+                Text(text = "Transaction amount: ${"%.2f AFN".format(transaction.amount)}")
+                Text(text = "Balance after: ${transaction.balanceAfter}")
+            }
         }
     }
 }
