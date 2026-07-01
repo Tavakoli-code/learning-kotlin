@@ -9,14 +9,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.input.clearText
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.bank_account_app.R
 import com.example.bank_account_app.viewmodel.BankAccountViewModel
@@ -26,65 +27,70 @@ val AppFontFamily = FontFamily(
     Font(R.font.open_sans, FontWeight.Normal)
 )
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BankAccountScreen(
     viewModel: BankAccountViewModel,
     onViewHistoryClick: () -> Unit,
-    modifier: Modifier = Modifier
 ) {
-    val uiState = viewModel.uiState
-    val amountState = rememberTextFieldState()
+    Scaffold(
+        topBar = {
+            CenterAlignedTopAppBar(
+                title = {
+                    Text(
+                        text = "Bank Account",
+                        fontWeight = FontWeight.Bold,
+                        fontFamily = AppFontFamily,
+                    )
+                }
+            )
+        }
+    ) { innerPadding ->
+        val uiState = viewModel.uiState
+        val amountState = rememberTextFieldState()
 
-    Column(
-        modifier = modifier
-            .padding(16.dp)
-            .fillMaxSize()
-    ) {
-        Text(
-            text = "Bank Account",
-            style = MaterialTheme.typography.titleLarge,
-            textAlign = TextAlign.Center,
-            fontWeight = FontWeight.Bold,
-            fontFamily = AppFontFamily,
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(Modifier.height(8.dp))
-
-        AccountHeader(
-            owner = uiState.owner,
-            accountType = uiState.accountType,
-            balance = uiState.balanceText
-        )
-
-        Spacer(Modifier.height(15.dp))
-
-        AmountInput(amountState = amountState)
-
-        Spacer(Modifier.height(12.dp))
-
-        ActionButtons(
-            onWithdrawClick = {
-                val amount = amountState.text.toString().toDoubleOrNull()
-                val success = viewModel.withdraw(amount)
-                if (success) { amountState.clearText() }
-            },
-            onDepositClick = {
-                val amount = amountState.text.toString().toDoubleOrNull()
-                val success = viewModel.deposit(amount)
-                if (success) { amountState.clearText() }
-            }
-        )
-
-        Spacer(Modifier.height(32.dp))
-        ResultMessage(message = uiState.resultMessage)
-
-        Spacer(Modifier.height(50.dp))
-        Button(
-            onClick = onViewHistoryClick,
-            modifier = Modifier.fillMaxWidth()
+        Column(
+            modifier = Modifier
+                .padding(innerPadding)
+                .padding(horizontal = 16.dp)
+                .fillMaxSize()
         ) {
-            Text( text = "View Transaction History")
+
+            AccountHeader(
+                owner = uiState.owner,
+                accountType = uiState.accountType,
+                balance = uiState.balanceText
+            )
+
+            Spacer(Modifier.height(15.dp))
+
+            AmountInput(amountState = amountState)
+
+            Spacer(Modifier.height(12.dp))
+
+            ActionButtons(
+                onWithdrawClick = {
+                    val amount = amountState.text.toString().toDoubleOrNull()
+                    val success = viewModel.withdraw(amount)
+                    if (success) { amountState.clearText() }
+                },
+                onDepositClick = {
+                    val amount = amountState.text.toString().toDoubleOrNull()
+                    val success = viewModel.deposit(amount)
+                    if (success) { amountState.clearText() }
+                }
+            )
+
+            Spacer(Modifier.height(32.dp))
+            ResultMessage(message = uiState.resultMessage)
+
+            Spacer(Modifier.height(50.dp))
+            Button(
+                onClick = onViewHistoryClick,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text( text = "View Transaction History")
+            }
         }
     }
 }
