@@ -21,7 +21,12 @@ fun AppNavigation(modifier: Modifier = Modifier) {
         modifier = modifier
     ) {
         composable(AppRoutes.BANK_ACCOUNT) {
-            BankAccountScreen()
+            BankAccountScreen(
+                viewModel = bankAccountViewModel,
+                onViewHistoryClick = {
+                    navController.navigate(AppRoutes.TRANSACTION_HISTORY)
+                }
+            )
         }
         composable(AppRoutes.TRANSACTION_HISTORY) {
             TransactionHistoryScreen(

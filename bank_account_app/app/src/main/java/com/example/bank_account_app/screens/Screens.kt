@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.input.clearText
 import androidx.compose.foundation.text.input.rememberTextFieldState
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -17,10 +18,8 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.bank_account_app.R
 import com.example.bank_account_app.viewmodel.BankAccountViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.bank_account_app.screens.components.*
 
 val AppFontFamily = FontFamily(
@@ -28,8 +27,11 @@ val AppFontFamily = FontFamily(
 )
 
 @Composable
-fun BankAccountScreen(modifier: Modifier = Modifier) {
-    val viewModel: BankAccountViewModel = viewModel()
+fun BankAccountScreen(
+    viewModel: BankAccountViewModel,
+    onViewHistoryClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     val uiState = viewModel.uiState
     val amountState = rememberTextFieldState()
 
@@ -42,7 +44,7 @@ fun BankAccountScreen(modifier: Modifier = Modifier) {
             text = "Bank Account",
             style = MaterialTheme.typography.titleLarge,
             textAlign = TextAlign.Center,
-            fontSize = 30.sp,
+            fontWeight = FontWeight.Bold,
             fontFamily = AppFontFamily,
             modifier = Modifier.fillMaxWidth()
         )
@@ -78,9 +80,11 @@ fun BankAccountScreen(modifier: Modifier = Modifier) {
         ResultMessage(message = uiState.resultMessage)
 
         Spacer(Modifier.height(50.dp))
-        TransactionHistory(
-            transactions = uiState.transactions,
-            modifier = Modifier.weight(1F)
-        )
+        Button(
+            onClick = onViewHistoryClick,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text( text = "View Transaction History")
+        }
     }
 }

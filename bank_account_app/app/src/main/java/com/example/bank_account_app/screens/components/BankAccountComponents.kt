@@ -79,13 +79,6 @@ fun ResultMessage(message: String) {
 
 @Composable
 fun TransactionHistory(transactions: List<Transaction>, modifier: Modifier = Modifier) {
-    Text(
-        text = "Transaction History",
-        style = MaterialTheme.typography.titleMedium,
-        textAlign = TextAlign.Center,
-        fontSize = 20.sp,
-        modifier = Modifier.fillMaxWidth()
-    )
     if (transactions.isEmpty()) {
         Text(
             text = "No transactions yet",
