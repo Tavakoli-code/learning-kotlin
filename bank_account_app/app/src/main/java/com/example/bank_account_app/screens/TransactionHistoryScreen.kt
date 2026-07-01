@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -18,7 +19,8 @@ import com.example.bank_account_app.screens.components.TransactionHistory
 
 @Composable
 fun TransactionHistoryScreen(
-    transactions: List<Transaction>
+    transactions: List<Transaction>,
+    onBackClick: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -35,11 +37,19 @@ fun TransactionHistoryScreen(
             modifier = Modifier.fillMaxWidth()
         )
 
+        Spacer(Modifier.height(8.dp))
+        Button(
+            onClick = onBackClick,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Back")
+        }
+
         Spacer(Modifier.height(16.dp))
 
         TransactionHistory(
             transactions = transactions,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.weight(1F)
         )
     }
 }

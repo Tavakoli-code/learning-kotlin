@@ -30,7 +30,10 @@ fun AppNavigation(modifier: Modifier = Modifier) {
         }
         composable(AppRoutes.TRANSACTION_HISTORY) {
             TransactionHistoryScreen(
-                transactions = bankAccountViewModel.uiState.transactions
+                transactions = bankAccountViewModel.uiState.transactions,
+                onBackClick = {
+                    navController.popBackStack()
+                }
             )
         }
     }
