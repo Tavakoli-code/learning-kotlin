@@ -2,7 +2,6 @@ package com.example.bank_account_app.viewmodel
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.example.bank_account_app.model.BankAccount
@@ -12,15 +11,15 @@ import com.example.bank_account_app.model.TransactionType
 
 class BankAccountViewModel: ViewModel() {
     private val account = BankAccount("Sajad Ali Tavakoli", 150.0)
-    val owner: String
-        get() = account.accountOwner
-    val accountType: String
-        get() = account.accountTypeLabel
-    var balanceText by mutableStateOf(account.displayBalance)
+
+    var uiState by mutableStateOf(
+        BankAccountUiState(
+            owner = account.accountOwner,
+            accountType = account.accountTypeLabel,
+            balanceText = account.displayBalance
+        )
+    )
         private set
-    var resultMessage by mutableStateOf("Result will appear here")
-        private set
-    val transactions = mutableStateListOf<Transaction>()
 
     private fun handleTransaction(
         amount: Double?,
@@ -29,24 +28,29 @@ class BankAccountViewModel: ViewModel() {
         transactionType: TransactionType
     ): Boolean {
         if (amount == null) {
-            resultMessage = "Please enter a valid amount"
+            uiState = uiState.copy(
+                resultMessage = "Please enter a valid amount"
+            )
             return false
         }
         when (val result = action(amount)) {
             is TransactionResult.Success -> {
-                balanceText = account.displayBalance
-                resultMessage = successMessage
-                transactions.add(
-                    Transaction(
-                        type = transactionType,
-                        amount = amount,
-                        balanceAfter = result.newBalance
-                    )
+                val newTransaction = Transaction(
+                    type = transactionType,
+                    amount = amount,
+                    balanceAfter = result.newBalance
+                )
+                uiState = uiState.copy(
+                    balanceText = account.displayBalance,
+                    resultMessage = successMessage,
+                    transactions =  uiState.transactions + newTransaction
                 )
                 return true
             }
             is TransactionResult.Failed -> {
-                resultMessage = result.reason
+                uiState = uiState.copy(
+                    resultMessage = result.reason
+                )
                 return false
             }
         }
