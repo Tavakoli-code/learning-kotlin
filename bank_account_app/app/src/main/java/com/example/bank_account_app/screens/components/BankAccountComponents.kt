@@ -1,12 +1,13 @@
 package com.example.bank_account_app.screens.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -76,7 +77,11 @@ fun ResultMessage(message: String) {
 }
 
 @Composable
-fun TransactionHistory(transactions: List<Transaction>, modifier: Modifier = Modifier) {
+fun TransactionHistory(
+    transactions: List<Transaction>,
+    modifier: Modifier = Modifier,
+    onTransactionClick: (Int) -> Unit
+) {
     if (transactions.isEmpty()) {
         Text(
             text = "No transactions yet",
@@ -89,19 +94,30 @@ fun TransactionHistory(transactions: List<Transaction>, modifier: Modifier = Mod
         LazyColumn(
             modifier = modifier
         ) {
-            items(transactions) { transaction ->
-                TransactionItem(transaction)
+            itemsIndexed(transactions) { index, transaction ->
+                TransactionItem(
+                    transaction,
+                    onClick = {
+                        onTransactionClick(index)
+                    }
+                )
             }
         }
     }
 }
 
 @Composable
-fun TransactionItem(transaction: Transaction) {
+fun TransactionItem(
+    transaction: Transaction,
+    onClick: () -> Unit
+    ) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 4.dp)
+            .clickable{
+                onClick()
+            }
     ) {
         Row(
             modifier = Modifier
