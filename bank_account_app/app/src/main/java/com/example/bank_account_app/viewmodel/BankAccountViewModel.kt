@@ -27,31 +27,33 @@ class BankAccountViewModel: ViewModel() {
         action: (Double) -> TransactionResult,
         successMessage: String,
         transactionType: TransactionType
-    ) {
+    ): Boolean {
         if (amount == null) {
             resultMessage = "Please enter a valid amount"
-        } else {
-            when (val result = action(amount)) {
-                is TransactionResult.Success -> {
-                    balanceText = account.displayBalance
-                    resultMessage = successMessage
-                    transactions.add(
-                        Transaction(
-                            type = transactionType,
-                            amount = amount,
-                            balanceAfter = result.newBalance
-                        )
+            return false
+        }
+        when (val result = action(amount)) {
+            is TransactionResult.Success -> {
+                balanceText = account.displayBalance
+                resultMessage = successMessage
+                transactions.add(
+                    Transaction(
+                        type = transactionType,
+                        amount = amount,
+                        balanceAfter = result.newBalance
                     )
-                }
-                is TransactionResult.Failed -> {
-                    resultMessage = result.reason
-                }
+                )
+                return true
+            }
+            is TransactionResult.Failed -> {
+                resultMessage = result.reason
+                return false
             }
         }
     }
 
-    fun deposit(amount: Double?) {
-        handleTransaction(
+    fun deposit(amount: Double?): Boolean {
+        return handleTransaction(
             amount = amount,
             action = account::deposit,
             successMessage = "Deposit successful",
@@ -59,8 +61,8 @@ class BankAccountViewModel: ViewModel() {
         )
     }
 
-    fun withdraw(amount: Double?) {
-        handleTransaction(
+    fun withdraw(amount: Double?): Boolean {
+        return handleTransaction(
             amount = amount,
             action = account::withdraw,
             successMessage = "Withdraw successful",

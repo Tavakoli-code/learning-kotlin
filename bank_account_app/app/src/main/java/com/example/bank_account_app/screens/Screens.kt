@@ -20,11 +20,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -33,10 +28,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.bank_account_app.R
-import com.example.bank_account_app.model.BankAccount
 import com.example.bank_account_app.model.Transaction
-import com.example.bank_account_app.model.TransactionResult
 import com.example.bank_account_app.model.TransactionType
+import com.example.bank_account_app.viewmodel.BankAccountViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 val AppFontFamily = FontFamily(
     Font(R.font.open_sans, FontWeight.Normal)
@@ -47,50 +42,8 @@ fun formatAmount(amount: Double): String {
 }
 @Composable
 fun BankAccountScreen(modifier: Modifier = Modifier) {
-    var resultMessage by remember {
-        mutableStateOf("Result will appear here")
-    }
-    val account = remember {
-        BankAccount("Sajad Ali Tavakoli", 150.0)
-    }
-    val transactions = remember {
-        mutableStateListOf<Transaction>()
-    }
-    var balanceText by remember {
-        mutableStateOf(account.displayBalance)
-    }
+    val viewModel: BankAccountViewModel = viewModel()
     val amountState = rememberTextFieldState()
-
-    fun handleTransaction(
-        action: (Double) -> TransactionResult,
-        successMessage: String,
-        transactionType: TransactionType
-    ) {
-        val amount = amountState.text.toString().toDoubleOrNull()
-
-        if (amount == null) {
-            resultMessage = "Please enter a valid amount"
-            return
-        } else {
-            when (val result = action(amount)) {
-                is TransactionResult.Success -> {
-                    balanceText = account.displayBalance
-                    resultMessage = successMessage
-                    amountState.clearText()
-                    transactions.add(
-                        Transaction(
-                            type = transactionType,
-                            amount = amount,
-                            balanceAfter = result.newBalance
-                        )
-                    )
-                }
-                is TransactionResult.Failed -> {
-                    resultMessage = result.reason
-                }
-            }
-        }
-    }
 
     Column(
         modifier = modifier
@@ -109,9 +62,9 @@ fun BankAccountScreen(modifier: Modifier = Modifier) {
         Spacer(Modifier.height(8.dp))
 
         AccountHeader(
-            owner = account.accountOwner,
-            accountType = account.accountTypeLabel,
-            balance = balanceText
+            owner = viewModel.owner,
+            accountType = viewModel.accountType,
+            balance = viewModel.balanceText
         )
 
         Spacer(Modifier.height(15.dp))
@@ -120,29 +73,24 @@ fun BankAccountScreen(modifier: Modifier = Modifier) {
 
         Spacer(Modifier.height(12.dp))
 
+        val amount = amountState.text.toString().toDoubleOrNull()
         ActionButtons(
             onWithdrawClick = {
-                handleTransaction(
-                    action = account::withdraw,
-                    successMessage = "Withdraw successful",
-                    transactionType = TransactionType.DEPOSIT
-                )
+                val success = viewModel.withdraw(amount)
+                if (success) { amountState.clearText() }
             },
             onDepositClick = {
-                handleTransaction(
-                    action = account::deposit,
-                    successMessage = "Deposit successful",
-                    transactionType = TransactionType.DEPOSIT
-                )
+                val success = viewModel.deposit(amount)
+                if (success) { amountState.clearText() }
             }
         )
 
         Spacer(Modifier.height(32.dp))
-        ResultMessage(message = resultMessage)
+        ResultMessage(message = viewModel.resultMessage)
 
         Spacer(Modifier.height(50.dp))
         TransactionHistory(
-            transactions = transactions,
+            transactions = viewModel.transactions,
             modifier = Modifier.weight(1F)
         )
     }
