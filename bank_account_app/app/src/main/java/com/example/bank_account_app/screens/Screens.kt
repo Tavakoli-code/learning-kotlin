@@ -38,8 +38,8 @@ fun BankAccountScreen(
     }
     val coroutineScope = rememberCoroutineScope()
     val focusManager = LocalFocusManager.current
-    fun finishTransaction(success: Boolean) {
-        if (success) {
+    fun finishTransaction(result: BankAccountViewModel.BankAccountActionResult) {
+        if (result.success) {
             amountState.clearText()
         }
 
@@ -47,7 +47,7 @@ fun BankAccountScreen(
 
         coroutineScope.launch {
             snackbarHostState.showSnackbar(
-                message = viewModel.uiState.resultMessage
+                message = result.message
             )
         }
     }
@@ -87,14 +87,13 @@ fun BankAccountScreen(
             ActionButtons(
                 onWithdrawClick = {
                     val amount = amountState.text.toString().toDoubleOrNull()
-                    val success = viewModel.withdraw(amount)
-                    finishTransaction(success)
+                    val result = viewModel.withdraw(amount)
+                    finishTransaction(result)
                 },
                 onDepositClick = {
                     val amount = amountState.text.toString().toDoubleOrNull()
-                    val success = viewModel.deposit(amount)
-                    if (success) { amountState.clearText() }
-                    finishTransaction(success)
+                    val result = viewModel.deposit(amount)
+                    finishTransaction(result)
                 }
             )
 

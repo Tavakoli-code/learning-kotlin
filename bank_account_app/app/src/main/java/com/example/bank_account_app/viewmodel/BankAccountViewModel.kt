@@ -3,7 +3,6 @@ package com.example.bank_account_app.viewmodel
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.toString
 import androidx.lifecycle.ViewModel
 import com.example.bank_account_app.model.BankAccount
 import com.example.bank_account_app.model.Transaction
@@ -27,12 +26,12 @@ class BankAccountViewModel: ViewModel() {
         action: (Double) -> TransactionResult,
         successMessage: String,
         transactionType: TransactionType
-    ): Boolean {
+    ): BankAccountActionResult {
         if (amount == null) {
-            uiState = uiState.copy(
-                resultMessage = "Please enter a valid amount"
+            return BankAccountActionResult(
+                success = false,
+                message = "Please enter a valid amount"
             )
-            return false
         }
         val now = System.currentTimeMillis()
         when (val result = action(amount)) {
@@ -49,18 +48,24 @@ class BankAccountViewModel: ViewModel() {
                     resultMessage = successMessage,
                     transactions =  uiState.transactions + newTransaction
                 )
-                return true
+                return BankAccountActionResult(
+                    success = true,
+                    message = successMessage
+                )
             }
             is TransactionResult.Failed -> {
                 uiState = uiState.copy(
                     resultMessage = result.reason
                 )
-                return false
+                return BankAccountActionResult(
+                    success = false,
+                    message = result.reason
+                )
             }
         }
     }
 
-    fun deposit(amount: Double?): Boolean {
+    fun deposit(amount: Double?): BankAccountActionResult {
         return handleTransaction(
             amount = amount,
             action = account::deposit,
@@ -69,7 +74,7 @@ class BankAccountViewModel: ViewModel() {
         )
     }
 
-    fun withdraw(amount: Double?): Boolean {
+    fun withdraw(amount: Double?): BankAccountActionResult {
         return handleTransaction(
             amount = amount,
             action = account::withdraw,
@@ -77,4 +82,9 @@ class BankAccountViewModel: ViewModel() {
             transactionType = TransactionType.WITHDRAW
         )
     }
+
+    data class BankAccountActionResult(
+        val success: Boolean,
+        val message: String
+    )
 }
