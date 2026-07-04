@@ -14,9 +14,11 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.bank_account_app.model.Transaction
 import com.example.bank_account_app.model.TransactionType
+import com.example.bank_account_app.screens.components.formatAmount
 import com.example.bank_account_app.screens.components.formatDateTime
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -56,17 +58,20 @@ fun TransactionDetailScreen(
             if (transaction == null) {
                 Text(text = "Transaction detail not found")
             } else {
-                Card {
+                Card(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
                     Column(
-                        modifier = Modifier.padding(8.dp)
+                        modifier = Modifier.padding(16.dp)
                     ) {
                         TransactionDetailRow("ID", transaction.id)
-                        when (transaction.type) {
-                            TransactionType.DEPOSIT -> TransactionDetailRow("Type", "Deposit")
-                            TransactionType.WITHDRAW -> TransactionDetailRow("Type", "Withdraw")
+                        val typeText = when (transaction.type) {
+                            TransactionType.DEPOSIT -> "Deposit"
+                            TransactionType.WITHDRAW -> "Withdraw"
                         }
-                        TransactionDetailRow("Amount", transaction.amount.toString())
-                        TransactionDetailRow("Balance after", transaction.balanceAfter.toString())
+                        TransactionDetailRow("Type", typeText)
+                        TransactionDetailRow("Amount", formatAmount(transaction.amount))
+                        TransactionDetailRow("Balance after", formatAmount(transaction.balanceAfter))
                         TransactionDetailRow("Date", formatDateTime(transaction.createdAt))
                     }
                 }
@@ -81,7 +86,9 @@ fun TransactionDetailRow(
     value: String
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 6.dp)
     ) {
         Text(
             text = label,
@@ -89,7 +96,8 @@ fun TransactionDetailRow(
         )
         Text(
             text = value,
-            modifier = Modifier.weight(1F)
+            modifier = Modifier.weight(1F),
+            textAlign = TextAlign.End
         )
     }
 }

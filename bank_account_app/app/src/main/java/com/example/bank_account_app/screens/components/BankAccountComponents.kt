@@ -20,13 +20,13 @@ import androidx.compose.ui.unit.dp
 import com.example.bank_account_app.model.Transaction
 import com.example.bank_account_app.model.TransactionType
 
-private fun formatAmount(amount: Double): String {
+fun formatAmount(amount: Double): String {
     return "%.2f AFN".format(amount)
 }
 
 fun formatDateTime(timestamp: Long): String {
     val formatter = java.text.SimpleDateFormat(
-        "dd MM yyyy, hh:mm a",
+        "dd MM yyyy, hh:mm",
         java.util.Locale.getDefault()
     )
     return formatter.format(java.util.Date(timestamp))
