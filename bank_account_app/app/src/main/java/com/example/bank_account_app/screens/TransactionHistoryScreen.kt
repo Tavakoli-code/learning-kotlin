@@ -46,27 +46,15 @@ fun TransactionHistoryScreen(
         mutableStateOf(TransactionSort.NEWEST_FIRST)
     }
 
-    val filteredTransactions = when (selectedFilter) {
-        TransactionFilter.ALL -> transactions
+    val filteredTransactions = filterTransactions(
+        transactions = transactions,
+        selectedFilter = selectedFilter
+    )
 
-        TransactionFilter.DEPOSIT -> transactions.filter { transaction ->
-            transaction.type == TransactionType.DEPOSIT
-        }
-
-        TransactionFilter.WITHDRAW -> transactions.filter { transaction ->
-            transaction.type == TransactionType.WITHDRAW
-        }
-    }
-
-    val visibleTransactions = when (selectedSort) {
-        TransactionSort.NEWEST_FIRST -> filteredTransactions.sortedByDescending { transaction ->
-            transaction.createdAt
-        }
-
-        TransactionSort.OLDEST_FIRST -> filteredTransactions.sortedBy { transaction ->
-            transaction.createdAt
-        }
-    }
+    val visibleTransactions = sortTransactions(
+        transactions = filteredTransactions,
+        selectedSort = selectedSort
+    )
 
     val totalTransactions = transactions.count()
 
@@ -251,5 +239,26 @@ private fun TransactionSortButton(
                 TransactionSort.OLDEST_FIRST -> "Sort: Oldest first"
             }
         )
+    }
+}
+
+private fun filterTransactions(
+    transactions: List<Transaction>,
+    selectedFilter: TransactionFilter
+): List<Transaction> {
+    return when (selectedFilter) {
+        TransactionFilter.ALL -> transactions
+        TransactionFilter.DEPOSIT -> transactions.filter { it.type == TransactionType.DEPOSIT }
+        TransactionFilter.WITHDRAW -> transactions.filter { it.type == TransactionType.WITHDRAW }
+    }
+}
+
+private fun sortTransactions(
+    transactions: List<Transaction>,
+    selectedSort: TransactionSort
+): List<Transaction> {
+    return when (selectedSort) {
+        TransactionSort.NEWEST_FIRST -> transactions.sortedByDescending { it.createdAt }
+        TransactionSort.OLDEST_FIRST -> transactions.sortedBy { it.createdAt }
     }
 }
