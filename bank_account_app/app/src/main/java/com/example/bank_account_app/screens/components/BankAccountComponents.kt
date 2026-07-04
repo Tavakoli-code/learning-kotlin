@@ -86,12 +86,13 @@ fun ResultMessage(message: String) {
 @Composable
 fun TransactionHistory(
     transactions: List<Transaction>,
+    emptyMessage: String,
     modifier: Modifier = Modifier,
     onTransactionClick: (String) -> Unit
 ) {
     if (transactions.isEmpty()) {
         Text(
-            text = "No transactions yet",
+            text = emptyMessage,
             textAlign = TextAlign.Center,
             modifier = Modifier
                 .padding(top = 30.dp)

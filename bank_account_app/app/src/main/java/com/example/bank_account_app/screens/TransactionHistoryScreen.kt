@@ -58,6 +58,12 @@ fun TransactionHistoryScreen(
 
     val summary = calculateTransactionSummary(transactions)
 
+    val emptyMessage = when (selectedFilter) {
+        TransactionFilter.ALL -> "No transaction yet"
+        TransactionFilter.WITHDRAW -> "No withdrawals found"
+        TransactionFilter.DEPOSIT -> "No deposits found"
+    }
+
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -110,6 +116,7 @@ fun TransactionHistoryScreen(
 
             TransactionHistory(
                 transactions = visibleTransactions,
+                emptyMessage = emptyMessage,
                 modifier = Modifier.weight(1f),
                 onTransactionClick = onTransactionClick
             )
