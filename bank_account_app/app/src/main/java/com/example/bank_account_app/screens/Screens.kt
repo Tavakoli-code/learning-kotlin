@@ -9,23 +9,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.input.clearText
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.Button
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.example.bank_account_app.R
 import com.example.bank_account_app.viewmodel.BankAccountViewModel
 import com.example.bank_account_app.screens.components.*
-
-val AppFontFamily = FontFamily(
-    Font(R.font.open_sans, FontWeight.Normal)
-)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
