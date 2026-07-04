@@ -130,21 +130,12 @@ fun TransactionHistoryScreen(
                 }
             )
 
-            TextButton(
-                onClick = {
-                    selectedSort = when (selectedSort) {
-                        TransactionSort.NEWEST_FIRST -> TransactionSort.OLDEST_FIRST
-                        TransactionSort.OLDEST_FIRST -> TransactionSort.NEWEST_FIRST
-                    }
+            TransactionSortButton(
+                selectedSort = selectedSort,
+                onSortChange = { sort ->
+                    selectedSort = sort
                 }
-            ) {
-                Text(
-                    text = when (selectedSort) {
-                        TransactionSort.NEWEST_FIRST -> "Sort: Newest first"
-                        TransactionSort.OLDEST_FIRST -> "Sort: Oldest first"
-                    }
-                )
-            }
+            )
             Spacer(Modifier.height(8.dp))
 
             TransactionHistory(
@@ -235,6 +226,30 @@ private fun TransactionFilterRow(
             text = "Withdrawals",
             selected = selectedFilter == TransactionFilter.WITHDRAW,
             onClick = { onFilterSelected(TransactionFilter.WITHDRAW) }
+        )
+    }
+}
+
+@Composable
+private fun TransactionSortButton(
+    selectedSort: TransactionSort,
+    onSortChange: (TransactionSort) -> Unit
+) {
+    TextButton(
+        onClick = {
+            val newSort = when (selectedSort) {
+                TransactionSort.NEWEST_FIRST -> TransactionSort.OLDEST_FIRST
+                TransactionSort.OLDEST_FIRST -> TransactionSort.NEWEST_FIRST
+            }
+
+            onSortChange(newSort)
+        }
+    ) {
+        Text(
+            text = when (selectedSort) {
+                TransactionSort.NEWEST_FIRST -> "Sort: Newest first"
+                TransactionSort.OLDEST_FIRST -> "Sort: Oldest first"
+            }
         )
     }
 }
