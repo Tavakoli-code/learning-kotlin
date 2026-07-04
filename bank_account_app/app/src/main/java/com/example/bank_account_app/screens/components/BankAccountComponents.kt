@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -87,7 +87,7 @@ fun ResultMessage(message: String) {
 fun TransactionHistory(
     transactions: List<Transaction>,
     modifier: Modifier = Modifier,
-    onTransactionClick: (Int) -> Unit
+    onTransactionClick: (String) -> Unit
 ) {
     if (transactions.isEmpty()) {
         Text(
@@ -101,11 +101,11 @@ fun TransactionHistory(
         LazyColumn(
             modifier = modifier
         ) {
-            itemsIndexed(transactions) { index, transaction ->
+            items(transactions) { transaction ->
                 TransactionItem(
-                    transaction,
+                    transaction = transaction,
                     onClick = {
-                        onTransactionClick(index)
+                        onTransactionClick(transaction.id)
                     }
                 )
             }

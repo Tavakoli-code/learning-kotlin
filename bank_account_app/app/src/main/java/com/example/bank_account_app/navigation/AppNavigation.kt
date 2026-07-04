@@ -37,9 +37,9 @@ fun AppNavigation(modifier: Modifier = Modifier) {
                 onBackClick = {
                     navController.popBackStack()
                 },
-                onTransactionClick = { index ->
+                onTransactionClick = { transactionId ->
                     navController.navigate(
-                        AppRoutes.transactionDetailRoute(index)
+                        AppRoutes.transactionDetailRoute(transactionId)
                     )
                 }
             )
@@ -47,16 +47,18 @@ fun AppNavigation(modifier: Modifier = Modifier) {
         composable(
             route = AppRoutes.TRANSACTION_DETAIL_ROUTE,
             arguments = listOf(
-                navArgument(AppRoutes.TRANSACTION_INDEX) {
-                    type = NavType.IntType
+                navArgument(AppRoutes.TRANSACTION_ID) {
+                    type = NavType.StringType
                 }
             )
         ) { backStackEntry ->
-            val transactionIndex = backStackEntry.arguments
-                ?.getInt(AppRoutes.TRANSACTION_INDEX)
+            val transactionId = backStackEntry.arguments
+                ?.getString(AppRoutes.TRANSACTION_ID)
 
-            val transaction = transactionIndex?.let { index ->
-                bankAccountViewModel.uiState.transactions.getOrNull(index)
+            val transaction = transactionId?.let { id ->
+                bankAccountViewModel.uiState.transactions.find { transaction ->
+                    transaction.id == id
+                }
             }
 
             TransactionDetailScreen(
