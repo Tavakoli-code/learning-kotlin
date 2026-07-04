@@ -12,3 +12,9 @@ enum class TransactionType {
     DEPOSIT,
     WITHDRAW
 }
+
+enum class TransactionFilter {
+    ALL,
+    DEPOSIT,
+    WITHDRAW
+}
