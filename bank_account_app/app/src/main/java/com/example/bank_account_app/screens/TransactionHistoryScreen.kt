@@ -56,25 +56,7 @@ fun TransactionHistoryScreen(
         selectedSort = selectedSort
     )
 
-    val totalTransactions = transactions.count()
-
-    val totalDeposits = transactions
-        .filter { transaction ->
-            transaction.type == TransactionType.DEPOSIT
-        }
-        .sumOf { transaction ->
-            transaction.amount
-        }
-
-    val totalWithdrawals = transactions
-        .filter { transaction ->
-            transaction.type == TransactionType.WITHDRAW
-        }
-        .sumOf { transaction ->
-            transaction.amount
-        }
-
-
+    val summary = calculateTransactionSummary(transactions)
 
     Scaffold(
         topBar = {
@@ -105,9 +87,9 @@ fun TransactionHistoryScreen(
                 .fillMaxSize()
         ) {
             TransactionSummaryCard(
-                totalTransactions = totalTransactions,
-                totalDeposits = totalDeposits,
-                totalWithdrawals = totalWithdrawals
+                totalTransactions = summary.totalTransactions,
+                totalDeposits = summary.totalDeposits,
+                totalWithdrawals = summary.totalWithdrawals
             )
             Spacer(Modifier.height(12.dp))
 
@@ -261,4 +243,24 @@ private fun sortTransactions(
         TransactionSort.NEWEST_FIRST -> transactions.sortedByDescending { it.createdAt }
         TransactionSort.OLDEST_FIRST -> transactions.sortedBy { it.createdAt }
     }
+}
+
+private data class TransactionSummary(
+    val totalTransactions: Int,
+    val totalDeposits: Double,
+    val totalWithdrawals: Double
+)
+
+private fun calculateTransactionSummary(
+    transactions: List<Transaction>
+): TransactionSummary {
+    return TransactionSummary(
+        totalTransactions = transactions.count(),
+        totalDeposits = transactions
+            .filter { it.type == TransactionType.DEPOSIT }
+            .sumOf { it.amount },
+        totalWithdrawals = transactions
+            .filter { it.type == TransactionType.WITHDRAW }
+            .sumOf { it.amount }
+    )
 }
