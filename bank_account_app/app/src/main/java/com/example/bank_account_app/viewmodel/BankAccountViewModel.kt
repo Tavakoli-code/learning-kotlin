@@ -3,6 +3,7 @@ package com.example.bank_account_app.viewmodel
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.toString
 import androidx.lifecycle.ViewModel
 import com.example.bank_account_app.model.BankAccount
 import com.example.bank_account_app.model.Transaction
@@ -33,12 +34,15 @@ class BankAccountViewModel: ViewModel() {
             )
             return false
         }
+        val now = System.currentTimeMillis()
         when (val result = action(amount)) {
             is TransactionResult.Success -> {
                 val newTransaction = Transaction(
+                    id = now.toString(),
                     type = transactionType,
                     amount = amount,
-                    balanceAfter = result.newBalance
+                    balanceAfter = result.newBalance,
+                    createdAt = now
                 )
                 uiState = uiState.copy(
                     balanceText = account.displayBalance,

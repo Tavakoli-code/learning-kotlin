@@ -24,6 +24,13 @@ private fun formatAmount(amount: Double): String {
     return "%.2f AFN".format(amount)
 }
 
+fun formatDateTime(timestamp: Long): String {
+    val formatter = java.text.SimpleDateFormat(
+        "dd MM yyyy, hh:mm a",
+        java.util.Locale.getDefault()
+    )
+    return formatter.format(java.util.Date(timestamp))
+}
 @Composable
 fun AccountHeader(owner: String, accountType: String, balance: String) {
     Text(text = "Owner: $owner")
