@@ -45,7 +45,6 @@ class BankAccountViewModel: ViewModel() {
                 )
                 uiState = uiState.copy(
                     balanceText = account.displayBalance,
-                    resultMessage = successMessage,
                     transactions =  uiState.transactions + newTransaction
                 )
                 return BankAccountActionResult(
@@ -54,9 +53,6 @@ class BankAccountViewModel: ViewModel() {
                 )
             }
             is TransactionResult.Failed -> {
-                uiState = uiState.copy(
-                    resultMessage = result.reason
-                )
                 return BankAccountActionResult(
                     success = false,
                     message = result.reason
