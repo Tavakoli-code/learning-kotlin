@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Card
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -20,12 +21,14 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.bank_account_app.model.TransactionFilter
 import com.example.bank_account_app.model.TransactionType
+import com.example.bank_account_app.screens.components.formatAmount
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -34,7 +37,7 @@ fun TransactionHistoryScreen(
     onBackClick: () -> Unit,
     onTransactionClick: (String) -> Unit
 ) {
-    var selectedFilter by remember {
+    var selectedFilter by rememberSaveable {
         mutableStateOf(TransactionFilter.ALL)
     }
     val filteredTransactions = when (selectedFilter) {
@@ -48,6 +51,21 @@ fun TransactionHistoryScreen(
             transaction.type == TransactionType.WITHDRAW
         }
     }
+    val totalTransactions = transactions.count()
+    val totalDeposits = transactions
+        .filter { transaction ->
+            transaction.type == TransactionType.DEPOSIT
+        }
+        .sumOf { transaction ->
+            transaction.amount
+        }
+    val totalWithdrawals = transactions
+        .filter { transaction ->
+            transaction.type == TransactionType.WITHDRAW
+        }
+        .sumOf { transaction ->
+            transaction.amount
+        }
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -76,6 +94,12 @@ fun TransactionHistoryScreen(
                 .padding(horizontal = 16.dp)
                 .fillMaxSize()
         ) {
+            TransactionSummaryCard(
+                totalTransactions = totalTransactions,
+                totalDeposits = totalDeposits,
+                totalWithdrawals = totalWithdrawals
+            )
+            Spacer(Modifier.height(12.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -119,4 +143,43 @@ private fun TransactionFilterChip (
             Text(text)
         }
     )
+}
+
+@Composable
+private fun TransactionSummaryCard(
+    totalTransactions: Int,
+    totalDeposits: Double,
+    totalWithdrawals: Double
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Column(
+            modifier = Modifier.padding(8.dp)
+        ) {
+            SummaryRow("Total Transactions", totalTransactions.toString())
+            SummaryRow("Total Deposits", formatAmount(totalDeposits))
+            SummaryRow("Total Withdrawals", formatAmount(totalWithdrawals))
+        }
+    }
+}
+
+@Composable
+private fun SummaryRow(
+    label: String,
+    value: String
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Text(
+            text = label,
+            modifier = Modifier.weight(1f)
+        )
+        Text(
+            text = value,
+            modifier = Modifier.weight(1f),
+            textAlign = TextAlign.End
+        )
+    }
 }
