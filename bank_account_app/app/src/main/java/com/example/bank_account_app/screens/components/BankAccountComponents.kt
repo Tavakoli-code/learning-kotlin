@@ -65,15 +65,6 @@ fun ActionButtons(onWithdrawClick: () -> Unit, onDepositClick: () -> Unit) {
 }
 
 @Composable
-fun ResultMessage(message: String) {
-    Text(
-        text = message,
-        modifier = Modifier.fillMaxWidth(),
-        textAlign = TextAlign.Center
-    )
-}
-
-@Composable
 fun TransactionHistory(
     transactions: List<Transaction>,
     emptyMessage: String,

@@ -14,12 +14,6 @@ class BankAccount(
     var balance: Double = initialBalance
         private set
 
-    val isEmpty: Boolean
-        get() = balance == 0.0
-
-    val canWithdraw: Boolean
-        get() = balance > 0.0
-
     val displayBalance: String
         get() = "%.2f $CURRENCY".format(balance)
 
