@@ -18,6 +18,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.bank_account_app.model.Transaction
 import com.example.bank_account_app.model.TransactionType
+import com.example.bank_account_app.screens.components.AppTopBar
 import com.example.bank_account_app.screens.components.formatAmount
 import com.example.bank_account_app.screens.components.formatDateTime
 
@@ -29,23 +30,9 @@ fun TransactionDetailScreen(
 ) {
     Scaffold(
         topBar = {
-            CenterAlignedTopAppBar(
-                title = {
-                    Text(
-                        text = "Transaction Detail",
-                        fontWeight = FontWeight.Bold,
-                        fontFamily = AppFontFamily,
-                    )
-                },
-                navigationIcon = {
-                    TextButton(
-                        onClick = onBackClick,
-                    ) {
-                        Text(
-                            "Back",
-                        )
-                    }
-                }
+            AppTopBar(
+                title = "Transaction Detail",
+                onBackClick = onBackClick
             )
         }
     ) { innerPadding ->

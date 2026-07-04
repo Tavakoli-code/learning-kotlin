@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import com.example.bank_account_app.model.TransactionFilter
 import com.example.bank_account_app.model.TransactionSort
 import com.example.bank_account_app.model.TransactionType
+import com.example.bank_account_app.screens.components.AppTopBar
 import com.example.bank_account_app.screens.components.formatAmount
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -66,23 +67,9 @@ fun TransactionHistoryScreen(
 
     Scaffold(
         topBar = {
-            CenterAlignedTopAppBar(
-                title = {
-                    Text(
-                        text = "Transaction History",
-                        fontWeight = FontWeight.Bold,
-                        fontFamily = AppFontFamily,
-                    )
-                },
-                navigationIcon = {
-                    TextButton(
-                        onClick = onBackClick,
-                    ) {
-                        Text(
-                            "Back",
-                        )
-                    }
-                }
+            AppTopBar(
+                title = "Transaction History",
+                onBackClick = onBackClick
             )
         }
     ) { innerPadding ->

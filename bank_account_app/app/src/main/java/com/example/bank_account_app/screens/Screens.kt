@@ -35,14 +35,8 @@ fun BankAccountScreen(
 ) {
     Scaffold(
         topBar = {
-            CenterAlignedTopAppBar(
-                title = {
-                    Text(
-                        text = "Bank Account",
-                        fontWeight = FontWeight.Bold,
-                        fontFamily = AppFontFamily,
-                    )
-                }
+            AppTopBar(
+                title = "Bank Account"
             )
         }
     ) { innerPadding ->
