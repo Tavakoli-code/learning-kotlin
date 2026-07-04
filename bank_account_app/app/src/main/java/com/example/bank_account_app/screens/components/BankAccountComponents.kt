@@ -19,18 +19,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.bank_account_app.model.Transaction
 import com.example.bank_account_app.model.TransactionType
+import com.example.bank_account_app.utils.formatAmount
 
-fun formatAmount(amount: Double): String {
-    return "%.2f AFN".format(amount)
-}
-
-fun formatDateTime(timestamp: Long): String {
-    val formatter = java.text.SimpleDateFormat(
-        "dd MM yyyy, hh:mm",
-        java.util.Locale.getDefault()
-    )
-    return formatter.format(java.util.Date(timestamp))
-}
 @Composable
 fun AccountHeader(owner: String, accountType: String, balance: String) {
     Text(text = "Owner: $owner")

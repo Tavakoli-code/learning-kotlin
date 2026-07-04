@@ -28,7 +28,7 @@ import com.example.bank_account_app.model.TransactionFilter
 import com.example.bank_account_app.model.TransactionSort
 import com.example.bank_account_app.model.TransactionType
 import com.example.bank_account_app.screens.components.AppTopBar
-import com.example.bank_account_app.screens.components.formatAmount
+import com.example.bank_account_app.utils.formatAmount
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -137,7 +137,7 @@ private fun TransactionSummaryCard(
             modifier = Modifier.padding(16.dp)
         ) {
             SummaryRow("Total Transactions", totalTransactions.toString() )
-            SummaryRow("Total Deposits", formatAmount(totalDeposits) )
+            SummaryRow("Total Deposits", formatAmount(totalDeposits))
             SummaryRow("Total Withdrawals", formatAmount(totalWithdrawals) )
         }
     }
