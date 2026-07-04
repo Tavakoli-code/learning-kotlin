@@ -18,3 +18,8 @@ enum class TransactionFilter {
     DEPOSIT,
     WITHDRAW
 }
+
+enum class TransactionSort {
+    NEWEST_FIRST,
+    OLDEST_FIRST
+}
