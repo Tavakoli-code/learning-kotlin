@@ -71,6 +71,11 @@ fun BankAccountScreen(
                 .padding(horizontal = 16.dp)
                 .fillMaxSize()
         ) {
+            fun performTransaction(action: (Double?) -> BankAccountViewModel.BankAccountActionResult) {
+                val amount = amountState.text.toString().toDoubleOrNull()
+                val result = action(amount)
+                finishTransaction(result)
+            }
 
             AccountHeader(
                 owner = uiState.owner,
@@ -86,14 +91,10 @@ fun BankAccountScreen(
 
             ActionButtons(
                 onWithdrawClick = {
-                    val amount = amountState.text.toString().toDoubleOrNull()
-                    val result = viewModel.withdraw(amount)
-                    finishTransaction(result)
+                    performTransaction(viewModel::withdraw)
                 },
                 onDepositClick = {
-                    val amount = amountState.text.toString().toDoubleOrNull()
-                    val result = viewModel.deposit(amount)
-                    finishTransaction(result)
+                    performTransaction(viewModel::deposit)
                 }
             )
 
