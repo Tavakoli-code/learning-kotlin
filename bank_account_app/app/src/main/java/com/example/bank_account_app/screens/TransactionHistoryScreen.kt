@@ -67,10 +67,14 @@ fun TransactionHistoryScreen(
 
     val summary = calculateTransactionSummary(transactions)
 
-    val emptyMessage = when (selectedFilter) {
-        TransactionFilter.ALL -> "No transaction yet"
-        TransactionFilter.WITHDRAW -> "No withdrawals found"
-        TransactionFilter.DEPOSIT -> "No deposits found"
+    val emptyMessage = if (searchQuery.isNotBlank()) {
+        "No transactions match your search"
+    } else {
+        when (selectedFilter) {
+            TransactionFilter.ALL -> "No transactions yet"
+            TransactionFilter.WITHDRAW -> "No withdrawals found"
+            TransactionFilter.DEPOSIT -> "No deposits found"
+        }
     }
 
     Scaffold(
@@ -98,6 +102,9 @@ fun TransactionHistoryScreen(
                 query = searchQuery,
                 onQueryChange = { newQuery ->
                     searchQuery = newQuery
+                },
+                onClearClick = {
+                    searchQuery = ""
                 }
             )
             Spacer(Modifier.height(8.dp))
@@ -237,13 +244,23 @@ private fun TransactionSortButton(
 @Composable
 private fun TransactionSearchInput(
     query: String,
-    onQueryChange: (String) -> Unit
+    onQueryChange: (String) -> Unit,
+    onClearClick: () -> Unit
 ) {
     OutlinedTextField(
         value = query,
         onValueChange = onQueryChange,
         label = {
             Text("Search transactions")
+        },
+        trailingIcon = {
+            if (query.isNotBlank()) {
+                TextButton(
+                    onClick = onClearClick
+                ) {
+                    Text("Clear")
+                }
+            }
         },
         modifier = Modifier.fillMaxWidth(),
         singleLine = true
