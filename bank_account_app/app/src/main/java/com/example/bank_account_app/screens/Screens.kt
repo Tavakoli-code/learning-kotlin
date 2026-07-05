@@ -1,16 +1,10 @@
 package com.example.bank_account_app.screens
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.input.clearText
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -26,7 +20,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.unit.dp
 import com.example.bank_account_app.viewmodel.BankAccountViewModel
 import com.example.bank_account_app.screens.components.*
 import com.example.bank_account_app.utils.formatAmount
@@ -56,6 +49,13 @@ fun BankAccountScreen(
     }
     val coroutineScope = rememberCoroutineScope()
     val focusManager = LocalFocusManager.current
+
+    fun readNote(): String? {
+        return noteState.text
+            .toString()
+            .trim()
+            .takeIf { it.isNotBlank() }
+    }
 
     fun readValidAmount(): Double? {
         val amountText = amountState.text.toString().trim()
@@ -91,12 +91,9 @@ fun BankAccountScreen(
     }
 
     fun performTransaction(action: (Double?, String?) -> BankAccountActionResult) {
-        val amount = readValidAmount()
+        val amount = readValidAmount() ?: return
 
-        val note = noteState.text
-            .toString()
-            .trim()
-            .takeIf { it.isNotBlank() }
+        val note = readNote()
 
         val result = action(amount, note)
 
@@ -116,59 +113,29 @@ fun BankAccountScreen(
                 )
         }
     ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .padding(innerPadding)
-                .padding(horizontal = 16.dp)
-                .fillMaxSize()
-        ) {
-            AccountHeader(
-                owner = uiState.owner,
-                accountType = uiState.accountType,
-                balance = uiState.balanceText
-            )
+        BankAccountContent(
+            uiState = uiState,
+            amountState = amountState,
+            noteState = noteState,
+            amountError = amountError,
+            onDepositClick = {
+                performTransaction(viewModel::deposit)
+            },
+            onWithdrawClick = {
+                val amount = readValidAmount()
 
-            Spacer(Modifier.height(15.dp))
+                if (amount != null) {
+                    pendingWithdrawAmount = amount
+                    pendingWithdrawNote = readNote()
 
-            AmountInput(
-                amountState = amountState,
-                errorMessage = amountError
-            )
-
-            Spacer(Modifier.height(8.dp))
-
-            NoteInput(noteState = noteState)
-
-            Spacer(Modifier.height(12.dp))
-
-            ActionButtons(
-                onWithdrawClick = {
-                    val amount = readValidAmount()
-
-                    if (amount != null) {
-                        pendingWithdrawAmount = amount
-
-                        pendingWithdrawNote = noteState.text
-                            .toString()
-                            .trim()
-                            .takeIf { it.isNotBlank() }
-                    }
-                },
-                onDepositClick = {
-                    performTransaction(viewModel::deposit)
+                    focusManager.clearFocus()
                 }
-            )
+            },
+            onViewHistoryClick = onViewHistoryClick,
+            modifier = Modifier.padding(innerPadding)
+        )
 
-            Spacer(Modifier.height(50.dp))
-            Button(
-                onClick = onViewHistoryClick,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text( text = "View Transaction History")
-            }
-        }
-
-        if (pendingWithdrawAmount != null) {
+        pendingWithdrawAmount?.let { amount ->
             AlertDialog(
                 onDismissRequest = {
                     pendingWithdrawAmount = null
@@ -178,20 +145,17 @@ fun BankAccountScreen(
                     Text("Confirm Withdraw")
                 },
                 text = {
-                    Text("Withdraw ${formatAmount((pendingWithdrawAmount!!))}?")
+                    Text("Withdraw ${formatAmount(amount)}?")
                 },
                 confirmButton = {
                     TextButton(
                         onClick = {
-                            val amount = pendingWithdrawAmount
-                            val note = pendingWithdrawNote
+                            val result = viewModel.withdraw(amount, pendingWithdrawNote)
 
-                            if (amount != null) {
-                                val result = viewModel.withdraw(amount, note)
-                                pendingWithdrawAmount = null
-                                pendingWithdrawNote = null
-                                finishTransaction(result)
-                            }
+                            pendingWithdrawAmount = null
+                            pendingWithdrawNote = null
+
+                            finishTransaction(result)
                         }
                     ) {
                         Text("Confirm")

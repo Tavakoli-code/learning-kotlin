@@ -2,8 +2,12 @@ package com.example.bank_account_app.screens.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -23,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import com.example.bank_account_app.model.Transaction
 import com.example.bank_account_app.model.TransactionType
 import com.example.bank_account_app.utils.formatAmount
+import com.example.bank_account_app.viewmodel.BankAccountUiState
 
 @Composable
 fun AccountHeader(owner: String, accountType: String, balance: String) {
@@ -153,4 +158,72 @@ fun TransactionItem(
             )
         }
     }
+}
+
+@Composable
+fun BankAccountContent(
+    uiState: BankAccountUiState,
+    amountState: TextFieldState,
+    noteState: TextFieldState,
+    amountError: String?,
+    onDepositClick: () -> Unit,
+    onWithdrawClick: () -> Unit,
+    onViewHistoryClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+            .padding(horizontal = 16.dp)
+            .fillMaxSize()
+    ) {
+        AccountHeader(
+            owner = uiState.owner,
+            accountType = uiState.accountType,
+            balance = uiState.balanceText
+        )
+
+        Spacer(Modifier.height(15.dp))
+
+        TransactionActionSection(
+            amountState = amountState,
+            noteState = noteState,
+            amountError = amountError,
+            onDepositClick = onDepositClick,
+            onWithdrawClick = onWithdrawClick
+        )
+
+        Spacer(Modifier.height(50.dp))
+
+        Button(
+            onClick = onViewHistoryClick,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("View Transaction History")
+        }
+    }
+}
+
+@Composable
+private fun TransactionActionSection(
+    amountState: TextFieldState,
+    noteState: TextFieldState,
+    amountError: String?,
+    onDepositClick: () -> Unit,
+    onWithdrawClick: () -> Unit
+) {
+    AmountInput(
+        amountState = amountState,
+        errorMessage = amountError
+    )
+
+    Spacer(Modifier.height(8.dp))
+
+    NoteInput(noteState = noteState)
+
+    Spacer(Modifier.height(12.dp))
+
+    ActionButtons(
+        onWithdrawClick = onWithdrawClick,
+        onDepositClick = onDepositClick
+    )
 }
