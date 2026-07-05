@@ -32,11 +32,17 @@ fun AccountHeader(owner: String, accountType: String, balance: String) {
 }
 
 @Composable
-fun AmountInput(amountState: TextFieldState) {
+fun AmountInput(amountState: TextFieldState, errorMessage: String?) {
     OutlinedTextField(
         state = amountState,
         label = { Text("Amount")},
         lineLimits = TextFieldLineLimits.SingleLine,
+        isError = errorMessage != null,
+        supportingText = {
+            if (errorMessage != null) {
+                Text( text = errorMessage )
+            }
+        },
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Number
         ),

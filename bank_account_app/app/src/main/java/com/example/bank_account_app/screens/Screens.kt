@@ -16,8 +16,12 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
@@ -35,6 +39,9 @@ fun BankAccountScreen(
     val uiState = viewModel.uiState
     val amountState = rememberTextFieldState()
     val noteState = rememberTextFieldState()
+    var amountError by rememberSaveable {
+        mutableStateOf<String?>(null)
+    }
     val snackbarHostState = remember {
         SnackbarHostState()
     }
@@ -56,12 +63,27 @@ fun BankAccountScreen(
     }
 
     fun performTransaction(action: (Double?, String?) -> BankAccountActionResult) {
+        if (amountState.text.toString().isBlank()) {
+            amountError = "Amount is required"
+            return
+        }
+
         val amount = amountState.text.toString().toDoubleOrNull()
+
+        if (amount == null) {
+            amountError = "Please enter a valid amount"
+            return
+        }
+
+        amountError = null
+
         val note = noteState.text
             .toString()
             .trim()
             .takeIf { it.isNotBlank() }
+
         val result = action(amount, note)
+
         finishTransaction(result)
     }
 
@@ -92,7 +114,10 @@ fun BankAccountScreen(
 
             Spacer(Modifier.height(15.dp))
 
-            AmountInput(amountState = amountState)
+            AmountInput(
+                amountState = amountState,
+                errorMessage = amountError
+            )
 
             Spacer(Modifier.height(8.dp))
 
