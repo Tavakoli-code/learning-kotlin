@@ -17,6 +17,7 @@ import com.example.bank_account_app.model.Transaction
 import com.example.bank_account_app.screens.components.TransactionHistory
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.getValue
@@ -45,13 +46,22 @@ fun TransactionHistoryScreen(
         mutableStateOf(TransactionSort.NEWEST_FIRST)
     }
 
+    var searchQuery by rememberSaveable {
+        mutableStateOf("")
+    }
+
     val filteredTransactions = filterTransactions(
         transactions = transactions,
         selectedFilter = selectedFilter
     )
 
-    val visibleTransactions = sortTransactions(
+    val searchedTransactions = searchTransactions(
         transactions = filteredTransactions,
+        query = searchQuery
+    )
+
+    val visibleTransactions = sortTransactions(
+        transactions = searchedTransactions,
         selectedSort = selectedSort
     )
 
@@ -83,6 +93,14 @@ fun TransactionHistoryScreen(
                 totalWithdrawals = summary.totalWithdrawals
             )
             Spacer(Modifier.height(12.dp))
+
+            TransactionSearchInput(
+                query = searchQuery,
+                onQueryChange = { newQuery ->
+                    searchQuery = newQuery
+                }
+            )
+            Spacer(Modifier.height(8.dp))
 
             TransactionFilterRow(
                 selectedFilter = selectedFilter,
@@ -216,6 +234,22 @@ private fun TransactionSortButton(
     }
 }
 
+@Composable
+private fun TransactionSearchInput(
+    query: String,
+    onQueryChange: (String) -> Unit
+) {
+    OutlinedTextField(
+        value = query,
+        onValueChange = onQueryChange,
+        label = {
+            Text("Search transactions")
+        },
+        modifier = Modifier.fillMaxWidth(),
+        singleLine = true
+    )
+}
+
 private fun filterTransactions(
     transactions: List<Transaction>,
     selectedFilter: TransactionFilter
@@ -255,4 +289,22 @@ private fun calculateTransactionSummary(
             .filter { it.type == TransactionType.WITHDRAW }
             .sumOf { it.amount }
     )
+}
+
+private fun searchTransactions(
+    transactions: List<Transaction>,
+    query: String
+): List<Transaction> {
+    val cleanQuery = query.trim()
+
+    if (cleanQuery.isBlank()) {
+        return transactions
+    }
+
+    return transactions.filter { transaction ->
+        transaction.id.contains(cleanQuery, ignoreCase = true)  ||
+                transaction.note?.contains(cleanQuery, ignoreCase = true) == true ||
+                transaction.amount.toString().contains(cleanQuery) ||
+                transaction.type.name.contains(cleanQuery, ignoreCase = true)
+    }
 }

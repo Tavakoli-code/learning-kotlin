@@ -95,7 +95,7 @@ class BankAccountViewModel: ViewModel() {
                 currentState.copy(isLoading = true)
             }
 
-            delay(3000)
+            delay(1000)
 
             _uiState.update { currentState ->
                 currentState.copy(
