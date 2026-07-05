@@ -3,6 +3,7 @@ package com.example.bank_account_app
 import com.example.bank_account_app.model.BankAccount
 import com.example.bank_account_app.model.TransactionResult
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertThrows
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -82,5 +83,23 @@ class BankAccountTest {
         }
 
         assertEquals(100.0, account.balance, 0.001)
+    }
+
+    @Test
+    fun createAccount_withBlankOwner_throwsException() {
+        val exception = assertThrows(IllegalArgumentException::class.java) {
+            BankAccount("", 100.0)
+        }
+
+        assertEquals("Account owner must not be blank", exception.message)
+    }
+
+    @Test
+    fun createAccount_withNegativeInitialBalance_throwsException() {
+        val exception = assertThrows(IllegalArgumentException::class.java) {
+            BankAccount("Test User", -10.0)
+        }
+
+        assertEquals("Initial balance can't be negative", exception.message)
     }
 }
