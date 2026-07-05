@@ -1,13 +1,16 @@
 package com.example.bank_account_app.viewmodel
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.bank_account_app.model.BankAccount
 import com.example.bank_account_app.model.Transaction
 import com.example.bank_account_app.model.TransactionResult
 import com.example.bank_account_app.model.TransactionType
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 class BankAccountViewModel: ViewModel() {
     private val account = BankAccount("Sajad Ali Tavakoli", 150.0)
@@ -84,6 +87,25 @@ class BankAccountViewModel: ViewModel() {
             transactionType = TransactionType.WITHDRAW,
             note = note
         )
+    }
+
+    fun loadAccount() {
+        viewModelScope.launch {
+            _uiState.update { currentState ->
+                currentState.copy(isLoading = true)
+            }
+
+            delay(3000)
+
+            _uiState.update { currentState ->
+                currentState.copy(
+                    owner = account.accountOwner,
+                    accountType = account.accountTypeLabel,
+                    balanceText = account.displayBalance,
+                    isLoading = false
+                )
+            }
+        }
     }
 }
 
