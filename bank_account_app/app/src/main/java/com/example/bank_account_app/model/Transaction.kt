@@ -5,8 +5,9 @@ data class Transaction(
     val type: TransactionType,
     val amount: Double,
     val balanceAfter: Double,
-    val createdAt: Long
-) {}
+    val createdAt: Long,
+    val note: String?
+)
 
 enum class TransactionType {
     DEPOSIT,

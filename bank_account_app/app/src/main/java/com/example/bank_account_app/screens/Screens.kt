@@ -23,6 +23,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import com.example.bank_account_app.viewmodel.BankAccountViewModel
 import com.example.bank_account_app.screens.components.*
+import com.example.bank_account_app.viewmodel.BankAccountActionResult
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -33,14 +34,16 @@ fun BankAccountScreen(
 ) {
     val uiState = viewModel.uiState
     val amountState = rememberTextFieldState()
+    val noteState = rememberTextFieldState()
     val snackbarHostState = remember {
         SnackbarHostState()
     }
     val coroutineScope = rememberCoroutineScope()
     val focusManager = LocalFocusManager.current
-    fun finishTransaction(result: BankAccountViewModel.BankAccountActionResult) {
+    fun finishTransaction(result: BankAccountActionResult) {
         if (result.success) {
             amountState.clearText()
+            noteState.clearText()
         }
 
         focusManager.clearFocus()
@@ -50,6 +53,16 @@ fun BankAccountScreen(
                 message = result.message
             )
         }
+    }
+
+    fun performTransaction(action: (Double?, String?) -> BankAccountActionResult) {
+        val amount = amountState.text.toString().toDoubleOrNull()
+        val note = noteState.text
+            .toString()
+            .trim()
+            .takeIf { it.isNotBlank() }
+        val result = action(amount, note)
+        finishTransaction(result)
     }
 
     Scaffold(
@@ -71,12 +84,6 @@ fun BankAccountScreen(
                 .padding(horizontal = 16.dp)
                 .fillMaxSize()
         ) {
-            fun performTransaction(action: (Double?) -> BankAccountViewModel.BankAccountActionResult) {
-                val amount = amountState.text.toString().toDoubleOrNull()
-                val result = action(amount)
-                finishTransaction(result)
-            }
-
             AccountHeader(
                 owner = uiState.owner,
                 accountType = uiState.accountType,
@@ -86,6 +93,10 @@ fun BankAccountScreen(
             Spacer(Modifier.height(15.dp))
 
             AmountInput(amountState = amountState)
+
+            Spacer(Modifier.height(8.dp))
+
+            NoteInput(noteState = noteState)
 
             Spacer(Modifier.height(12.dp))
 

@@ -45,6 +45,16 @@ fun AmountInput(amountState: TextFieldState) {
 }
 
 @Composable
+fun NoteInput(noteState: TextFieldState) {
+    OutlinedTextField(
+        state = noteState,
+        label = { Text("Note") },
+        lineLimits = TextFieldLineLimits.SingleLine,
+        modifier = Modifier.fillMaxWidth()
+    )
+}
+
+@Composable
 fun ActionButtons(onWithdrawClick: () -> Unit, onDepositClick: () -> Unit) {
     Row(
         horizontalArrangement = Arrangement.SpaceEvenly,

@@ -57,6 +57,7 @@ fun TransactionDetailScreen(
                         TransactionDetailRow("Amount", formatAmount(transaction.amount))
                         TransactionDetailRow("Balance after", formatAmount(transaction.balanceAfter))
                         TransactionDetailRow("Date", formatDateTime(transaction.createdAt))
+                        TransactionDetailRow("Note", value = transaction.note ?: "No note")
                     }
                 }
             }

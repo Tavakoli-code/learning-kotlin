@@ -25,7 +25,8 @@ class BankAccountViewModel: ViewModel() {
         amount: Double?,
         action: (Double) -> TransactionResult,
         successMessage: String,
-        transactionType: TransactionType
+        transactionType: TransactionType,
+        note: String?
     ): BankAccountActionResult {
         if (amount == null) {
             return BankAccountActionResult(
@@ -41,7 +42,8 @@ class BankAccountViewModel: ViewModel() {
                     type = transactionType,
                     amount = amount,
                     balanceAfter = result.newBalance,
-                    createdAt = now
+                    createdAt = now,
+                    note = note
                 )
                 uiState = uiState.copy(
                     balanceText = account.displayBalance,
@@ -61,26 +63,28 @@ class BankAccountViewModel: ViewModel() {
         }
     }
 
-    fun deposit(amount: Double?): BankAccountActionResult {
+    fun deposit(amount: Double?, note: String?): BankAccountActionResult {
         return handleTransaction(
             amount = amount,
             action = account::deposit,
             successMessage = "Deposit successful",
-            transactionType = TransactionType.DEPOSIT
+            transactionType = TransactionType.DEPOSIT,
+            note = note
         )
     }
 
-    fun withdraw(amount: Double?): BankAccountActionResult {
+    fun withdraw(amount: Double?, note: String?): BankAccountActionResult {
         return handleTransaction(
             amount = amount,
             action = account::withdraw,
             successMessage = "Withdraw successful",
-            transactionType = TransactionType.WITHDRAW
+            transactionType = TransactionType.WITHDRAW,
+            note = note
         )
     }
-
-    data class BankAccountActionResult(
-        val success: Boolean,
-        val message: String
-    )
 }
+
+data class BankAccountActionResult(
+    val success: Boolean,
+    val message: String
+)
