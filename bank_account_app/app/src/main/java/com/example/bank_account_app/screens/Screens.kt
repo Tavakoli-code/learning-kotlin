@@ -20,6 +20,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.bank_account_app.viewmodel.BankAccountViewModel
 import com.example.bank_account_app.screens.components.*
 import com.example.bank_account_app.utils.formatAmount
@@ -32,7 +33,7 @@ fun BankAccountScreen(
     viewModel: BankAccountViewModel,
     onViewHistoryClick: () -> Unit,
 ) {
-    val uiState = viewModel.uiState
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val amountState = rememberTextFieldState()
     val noteState = rememberTextFieldState()
     var amountError by rememberSaveable {

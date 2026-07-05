@@ -1,7 +1,9 @@
 package com.example.bank_account_app.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -17,6 +19,7 @@ import com.example.bank_account_app.viewmodel.BankAccountViewModel
 fun AppNavigation(modifier: Modifier = Modifier) {
     val navController = rememberNavController()
     val bankAccountViewModel: BankAccountViewModel = viewModel()
+    val uiState by bankAccountViewModel.uiState.collectAsStateWithLifecycle()
 
     NavHost(
         navController = navController,
@@ -33,7 +36,7 @@ fun AppNavigation(modifier: Modifier = Modifier) {
         }
         composable(AppRoutes.TRANSACTION_HISTORY) {
             TransactionHistoryScreen(
-                transactions = bankAccountViewModel.uiState.transactions,
+                transactions = uiState.transactions,
                 onBackClick = {
                     navController.popBackStack()
                 },
@@ -56,7 +59,7 @@ fun AppNavigation(modifier: Modifier = Modifier) {
                 ?.getString(AppRoutes.TRANSACTION_ID)
 
             val transaction = transactionId?.let { id ->
-                bankAccountViewModel.uiState.transactions.find { transaction ->
+                uiState.transactions.find { transaction ->
                     transaction.id == id
                 }
             }

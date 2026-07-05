@@ -1,25 +1,26 @@
 package com.example.bank_account_app.viewmodel
 
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.example.bank_account_app.model.BankAccount
 import com.example.bank_account_app.model.Transaction
 import com.example.bank_account_app.model.TransactionResult
 import com.example.bank_account_app.model.TransactionType
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 
 class BankAccountViewModel: ViewModel() {
     private val account = BankAccount("Sajad Ali Tavakoli", 150.0)
 
-    var uiState by mutableStateOf(
+    private val _uiState = MutableStateFlow(
         BankAccountUiState(
             owner = account.accountOwner,
             accountType = account.accountTypeLabel,
             balanceText = account.displayBalance
         )
     )
-        private set
+
+    val uiState = _uiState.asStateFlow()
 
     private fun handleTransaction(
         amount: Double?,
@@ -45,10 +46,12 @@ class BankAccountViewModel: ViewModel() {
                     createdAt = now,
                     note = note
                 )
-                uiState = uiState.copy(
-                    balanceText = account.displayBalance,
-                    transactions =  uiState.transactions + newTransaction
-                )
+                _uiState.update { currentState ->
+                    currentState.copy(
+                        balanceText = account.displayBalance,
+                        transactions = currentState.transactions + newTransaction
+                    )
+                }
                 return BankAccountActionResult(
                     success = true,
                     message = successMessage
