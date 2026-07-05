@@ -9,12 +9,14 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.input.clearText
 import androidx.compose.foundation.text.input.rememberTextFieldState
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.getValue
@@ -27,6 +29,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import com.example.bank_account_app.viewmodel.BankAccountViewModel
 import com.example.bank_account_app.screens.components.*
+import com.example.bank_account_app.utils.formatAmount
 import com.example.bank_account_app.viewmodel.BankAccountActionResult
 import kotlinx.coroutines.launch
 
@@ -42,11 +45,36 @@ fun BankAccountScreen(
     var amountError by rememberSaveable {
         mutableStateOf<String?>(null)
     }
+    var pendingWithdrawAmount by rememberSaveable {
+        mutableStateOf<Double?>(null)
+    }
+    var pendingWithdrawNote by rememberSaveable {
+        mutableStateOf<String?>(null)
+    }
     val snackbarHostState = remember {
         SnackbarHostState()
     }
     val coroutineScope = rememberCoroutineScope()
     val focusManager = LocalFocusManager.current
+
+    fun readValidAmount(): Double? {
+        val amountText = amountState.text.toString().trim()
+        val amount = amountText.toDoubleOrNull()
+
+        if (amountText.isBlank()) {
+            amountError = "Amount is required"
+            return null
+        }
+
+        if (amount == null) {
+            amountError = "Please enter a valid amount"
+            return null
+        }
+
+        amountError = null
+        return amount
+    }
+
     fun finishTransaction(result: BankAccountActionResult) {
         if (result.success) {
             amountState.clearText()
@@ -63,19 +91,7 @@ fun BankAccountScreen(
     }
 
     fun performTransaction(action: (Double?, String?) -> BankAccountActionResult) {
-        if (amountState.text.toString().isBlank()) {
-            amountError = "Amount is required"
-            return
-        }
-
-        val amount = amountState.text.toString().toDoubleOrNull()
-
-        if (amount == null) {
-            amountError = "Please enter a valid amount"
-            return
-        }
-
-        amountError = null
+        val amount = readValidAmount()
 
         val note = noteState.text
             .toString()
@@ -127,7 +143,16 @@ fun BankAccountScreen(
 
             ActionButtons(
                 onWithdrawClick = {
-                    performTransaction(viewModel::withdraw)
+                    val amount = readValidAmount()
+
+                    if (amount != null) {
+                        pendingWithdrawAmount = amount
+
+                        pendingWithdrawNote = noteState.text
+                            .toString()
+                            .trim()
+                            .takeIf { it.isNotBlank() }
+                    }
                 },
                 onDepositClick = {
                     performTransaction(viewModel::deposit)
@@ -141,6 +166,48 @@ fun BankAccountScreen(
             ) {
                 Text( text = "View Transaction History")
             }
+        }
+
+        if (pendingWithdrawAmount != null) {
+            AlertDialog(
+                onDismissRequest = {
+                    pendingWithdrawAmount = null
+                    pendingWithdrawNote = null
+                },
+                title = {
+                    Text("Confirm Withdraw")
+                },
+                text = {
+                    Text("Withdraw ${formatAmount((pendingWithdrawAmount!!))}?")
+                },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            val amount = pendingWithdrawAmount
+                            val note = pendingWithdrawNote
+
+                            if (amount != null) {
+                                val result = viewModel.withdraw(amount, note)
+                                pendingWithdrawAmount = null
+                                pendingWithdrawNote = null
+                                finishTransaction(result)
+                            }
+                        }
+                    ) {
+                        Text("Confirm")
+                    }
+                },
+                dismissButton = {
+                    TextButton(
+                        onClick = {
+                            pendingWithdrawAmount = null
+                            pendingWithdrawNote = null
+                        }
+                    ) {
+                        Text("Cancel")
+                    }
+                }
+            )
         }
     }
 }
