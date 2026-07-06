@@ -111,7 +111,10 @@ fun TransactionHistory(
         LazyColumn(
             modifier = modifier
         ) {
-            items(transactions) { transaction ->
+            items(
+                items = transactions,
+                key = { transaction -> transaction.id }
+            ) { transaction ->
                 TransactionItem(
                     transaction = transaction,
                     onClick = {
