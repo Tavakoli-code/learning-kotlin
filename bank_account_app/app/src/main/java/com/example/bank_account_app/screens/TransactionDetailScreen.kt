@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import com.example.bank_account_app.model.Transaction
 import com.example.bank_account_app.model.TransactionType
 import com.example.bank_account_app.screens.components.AppTopBar
+import com.example.bank_account_app.utils.displayName
 import com.example.bank_account_app.utils.formatAmount
 import com.example.bank_account_app.utils.formatDateTime
 
@@ -49,10 +50,7 @@ fun TransactionDetailScreen(
                         modifier = Modifier.padding(16.dp)
                     ) {
                         TransactionDetailRow("ID", transaction.id)
-                        val typeText = when (transaction.type) {
-                            TransactionType.DEPOSIT -> "Deposit"
-                            TransactionType.WITHDRAW -> "Withdraw"
-                        }
+                        val typeText = transaction.type.displayName()
                         TransactionDetailRow("Type", typeText)
                         TransactionDetailRow("Amount", formatAmount(transaction.amount))
                         TransactionDetailRow("Balance after", formatAmount(transaction.balanceAfter))

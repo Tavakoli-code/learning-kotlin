@@ -26,6 +26,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.bank_account_app.model.Transaction
 import com.example.bank_account_app.model.TransactionType
+import com.example.bank_account_app.utils.displayName
 import com.example.bank_account_app.utils.formatAmount
 import com.example.bank_account_app.viewmodel.BankAccountUiState
 
@@ -145,10 +146,7 @@ fun TransactionItem(
                 .padding(12.dp)
         ) {
             Text(
-                text = when (transaction.type) {
-                    TransactionType.DEPOSIT -> "Deposit"
-                    TransactionType.WITHDRAW -> "Withdraw"
-                },
+                text = transaction.type.displayName(),
                 modifier = Modifier.weight(1F)
             )
             Text(

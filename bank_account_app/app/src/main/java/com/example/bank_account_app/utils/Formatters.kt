@@ -1,5 +1,6 @@
 package com.example.bank_account_app.utils
 
+import com.example.bank_account_app.model.TransactionType
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -15,4 +16,11 @@ fun formatDateTime(timestamp: Long): String {
     )
 
     return formatter.format(Date(timestamp))
+}
+
+fun TransactionType.displayName(): String {
+    return when (this) {
+        TransactionType.DEPOSIT -> "Deposit"
+        TransactionType.WITHDRAW -> "Withdraw"
+    }
 }
