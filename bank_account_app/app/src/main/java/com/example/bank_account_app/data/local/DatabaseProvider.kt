@@ -5,11 +5,18 @@ import androidx.room.Room
 
 object DatabaseProvider {
 
-    fun createDatabase(context: Context): AppDatabase {
-        return Room.databaseBuilder(
-            context.applicationContext,
-            AppDatabase::class.java,
-            "bank_account_database"
-        ).build()
+    @Volatile
+    private var database: AppDatabase? = null
+
+    fun getDatabase(context: Context): AppDatabase {
+        return database ?: synchronized(this) {
+            database ?: Room.databaseBuilder(
+                context.applicationContext,
+                AppDatabase::class.java,
+                "bank_account_database"
+            ).build().also { createdDatabase ->
+                database = createdDatabase
+            }
+        }
     }
 }
