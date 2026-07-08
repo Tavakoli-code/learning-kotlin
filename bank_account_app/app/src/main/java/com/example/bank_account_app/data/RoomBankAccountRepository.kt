@@ -39,4 +39,9 @@ class RoomBankAccountRepository(
     override suspend fun addTransaction(transaction: Transaction) {
         transactionDao.insertTransaction(transaction.toEntity())
     }
+
+    override suspend fun resetData() {
+        transactionDao.deleteAllTransactions()
+        accountDao.deleteAccount()
+    }
 }

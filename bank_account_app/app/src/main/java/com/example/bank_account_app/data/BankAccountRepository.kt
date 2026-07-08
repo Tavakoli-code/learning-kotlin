@@ -11,6 +11,7 @@ interface BankAccountRepository {
     fun observeTransactions(): Flow<List<Transaction>>
     suspend fun saveAccount(account: BankAccount)
     suspend fun addTransaction(transaction: Transaction)
+    suspend fun resetData()
 }
 
 class InMemoryBankAccountRepository : BankAccountRepository {
@@ -33,5 +34,10 @@ class InMemoryBankAccountRepository : BankAccountRepository {
 
     override suspend fun addTransaction(transaction: Transaction) {
         transactions.value += transaction
+    }
+
+    override suspend fun resetData() {
+        transactions.value = emptyList()
+        account.value = BankAccount("Sajad Ali Tavakoli", 150.0)
     }
 }
