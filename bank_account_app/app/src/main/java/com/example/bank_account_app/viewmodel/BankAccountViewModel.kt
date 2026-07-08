@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlin.time.Duration.Companion.milliseconds
 
 class BankAccountViewModel(
     private val repository: BankAccountRepository = InMemoryBankAccountRepository()
@@ -27,6 +28,16 @@ class BankAccountViewModel(
     )
 
     val uiState = _uiState.asStateFlow()
+
+    init {
+        viewModelScope.launch {
+            repository.observeTransactions().collect { transactions ->
+                _uiState.update { currentState ->
+                    currentState.copy(transactions = transactions)
+                }
+            }
+        }
+    }
 
     private fun handleTransaction(
         amount: Double?,
@@ -53,12 +64,13 @@ class BankAccountViewModel(
                     note = note
                 )
 
-                repository.addTransaction(newTransaction)
+                viewModelScope.launch {
+                    repository.addTransaction(newTransaction)
+                }
 
                 _uiState.update { currentState ->
                     currentState.copy(
-                        balanceText = account.displayBalance,
-                        transactions = repository.getTransactions()
+                        balanceText = account.displayBalance
                     )
                 }
                 return BankAccountActionResult(
@@ -101,7 +113,7 @@ class BankAccountViewModel(
                 currentState.copy(isLoading = true)
             }
 
-            delay(1000)
+            delay(1000.milliseconds)
 
             _uiState.update { currentState ->
                 currentState.copy(
