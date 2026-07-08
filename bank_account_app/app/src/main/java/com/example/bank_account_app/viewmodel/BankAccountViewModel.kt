@@ -2,7 +2,7 @@ package com.example.bank_account_app.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.bank_account_app.model.BankAccount
+import com.example.bank_account_app.data.BankAccountRepository
 import com.example.bank_account_app.model.Transaction
 import com.example.bank_account_app.model.TransactionResult
 import com.example.bank_account_app.model.TransactionType
@@ -13,7 +13,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class BankAccountViewModel: ViewModel() {
-    private val account = BankAccount("Sajad Ali Tavakoli", 150.0)
+    val repository = BankAccountRepository()
+    private val account = repository.getAccount()
 
     private val _uiState = MutableStateFlow(
         BankAccountUiState(
@@ -49,10 +50,13 @@ class BankAccountViewModel: ViewModel() {
                     createdAt = now,
                     note = note
                 )
+
+                repository.addTransaction(newTransaction)
+
                 _uiState.update { currentState ->
                     currentState.copy(
                         balanceText = account.displayBalance,
-                        transactions = currentState.transactions + newTransaction
+                        transactions = repository.getTransactions()
                     )
                 }
                 return BankAccountActionResult(
