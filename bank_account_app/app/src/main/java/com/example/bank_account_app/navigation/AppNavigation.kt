@@ -4,7 +4,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -16,9 +15,11 @@ import com.example.bank_account_app.screens.TransactionHistoryScreen
 import com.example.bank_account_app.viewmodel.BankAccountViewModel
 
 @Composable
-fun AppNavigation(modifier: Modifier = Modifier) {
+fun AppNavigation(
+    bankAccountViewModel: BankAccountViewModel,
+    modifier: Modifier = Modifier
+) {
     val navController = rememberNavController()
-    val bankAccountViewModel: BankAccountViewModel = viewModel()
     val uiState by bankAccountViewModel.uiState.collectAsStateWithLifecycle()
 
     NavHost(
