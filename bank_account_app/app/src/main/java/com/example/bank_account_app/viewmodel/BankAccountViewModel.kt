@@ -128,25 +128,6 @@ class BankAccountViewModel(
             note = note
         )
     }
-
-    fun loadAccount() {
-//        viewModelScope.launch {
-//            _uiState.update { currentState ->
-//                currentState.copy(isLoading = true)
-//            }
-//
-//            delay(1000.milliseconds)
-//
-//            _uiState.update { currentState ->
-//                currentState.copy(
-//                    owner = account.accountOwner,
-//                    accountType = account.accountTypeLabel,
-//                    balanceText = account.displayBalance,
-//                    isLoading = false
-//                )
-//            }
-//        }
-    }
 }
 
 data class BankAccountActionResult(
