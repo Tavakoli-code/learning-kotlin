@@ -17,6 +17,7 @@ import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -170,6 +171,7 @@ fun BankAccountContent(
     onDepositClick: () -> Unit,
     onWithdrawClick: () -> Unit,
     onViewHistoryClick: () -> Unit,
+    onResetClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -200,6 +202,15 @@ fun BankAccountContent(
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("View Transaction History")
+        }
+
+        Spacer(Modifier.height(50.dp))
+
+        OutlinedButton(
+            onClick = onResetClick,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Reset Data")
         }
     }
 }

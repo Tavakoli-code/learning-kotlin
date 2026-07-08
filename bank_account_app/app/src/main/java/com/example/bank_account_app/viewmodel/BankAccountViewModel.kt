@@ -128,6 +128,17 @@ class BankAccountViewModel(
             note = note
         )
     }
+
+    fun resetData(): BankAccountActionResult {
+        viewModelScope.launch {
+            repository.resetData()
+        }
+
+        return BankAccountActionResult(
+            success = true,
+            message = "Data reset successfully"
+        )
+    }
 }
 
 data class BankAccountActionResult(

@@ -50,6 +50,9 @@ fun BankAccountScreen(
     var pendingWithdrawNote by rememberSaveable {
         mutableStateOf<String?>(null)
     }
+    var showResetDialog by rememberSaveable {
+        mutableStateOf(false)
+    }
     val snackbarHostState = remember {
         SnackbarHostState()
     }
@@ -148,6 +151,9 @@ fun BankAccountScreen(
                     }
                 },
                 onViewHistoryClick = onViewHistoryClick,
+                onResetClick = {
+                    showResetDialog = true
+                },
                 modifier = Modifier.padding(innerPadding)
             )
         }
@@ -183,6 +189,40 @@ fun BankAccountScreen(
                         onClick = {
                             pendingWithdrawAmount = null
                             pendingWithdrawNote = null
+                        }
+                    ) {
+                        Text("Cancel")
+                    }
+                }
+            )
+        }
+
+        if (showResetDialog) {
+            AlertDialog(
+                onDismissRequest = {
+                    showResetDialog = false
+                },
+                title = {
+                    Text("Reset data?")
+                },
+                text = {
+                    Text("This will delete all transactions and reset your balance.")
+                },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            showResetDialog = false
+                            val result = viewModel.resetData()
+                            finishTransaction(result)
+                        }
+                    ) {
+                        Text("Reset")
+                    }
+                },
+                dismissButton = {
+                    TextButton(
+                        onClick = {
+                            showResetDialog = false
                         }
                     ) {
                         Text("Cancel")
