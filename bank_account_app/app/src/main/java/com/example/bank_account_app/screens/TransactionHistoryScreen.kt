@@ -30,6 +30,7 @@ import com.example.bank_account_app.model.TransactionSort
 import com.example.bank_account_app.model.TransactionType
 import com.example.bank_account_app.screens.components.AppTopBar
 import com.example.bank_account_app.utils.formatAmount
+import com.example.bank_account_app.utils.matchesSearch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -312,16 +313,7 @@ private fun searchTransactions(
     transactions: List<Transaction>,
     query: String
 ): List<Transaction> {
-    val cleanQuery = query.trim()
-
-    if (cleanQuery.isBlank()) {
-        return transactions
-    }
-
     return transactions.filter { transaction ->
-        transaction.id.contains(cleanQuery, ignoreCase = true)  ||
-                transaction.note?.contains(cleanQuery, ignoreCase = true) == true ||
-                transaction.amount.toString().contains(cleanQuery) ||
-                transaction.type.name.contains(cleanQuery, ignoreCase = true)
+        transaction.matchesSearch(query)
     }
 }
