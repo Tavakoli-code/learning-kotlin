@@ -26,7 +26,8 @@ class MainActivity : ComponentActivity() {
             val repository = remember {
                 val database = DatabaseProvider.createDatabase(context)
                 RoomBankAccountRepository(
-                    transactionDao = database.transactionDao()
+                    transactionDao = database.transactionDao(),
+                    accountDao = database.accountDao()
                 )
             }
 

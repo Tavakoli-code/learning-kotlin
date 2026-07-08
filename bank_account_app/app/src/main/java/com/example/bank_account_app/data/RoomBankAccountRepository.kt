@@ -1,5 +1,6 @@
 package com.example.bank_account_app.data
 
+import com.example.bank_account_app.data.local.AccountDao
 import com.example.bank_account_app.data.local.TransactionDao
 import com.example.bank_account_app.data.local.toDomain
 import com.example.bank_account_app.data.local.toEntity
@@ -9,13 +10,17 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 class RoomBankAccountRepository(
-    private val transactionDao: TransactionDao
+    private val transactionDao: TransactionDao,
+    private val accountDao: AccountDao
 ) : BankAccountRepository {
 
-    private val account = BankAccount("Sajad Ali Tavakoli", 150.0)
+    private val defaultAccount = BankAccount("Sajad Ali Tavakoli", 150.0)
 
-    override fun getAccount(): BankAccount {
-        return account
+    override fun observeAccount(): Flow<BankAccount> {
+        return accountDao.observeAccount()
+            .map { accountEntity ->
+                accountEntity?.toDomain() ?: defaultAccount
+            }
     }
 
     override fun observeTransactions(): Flow<List<Transaction>> {
@@ -25,6 +30,10 @@ class RoomBankAccountRepository(
                     entity.toDomain()
                 }
             }
+    }
+
+    override suspend fun saveAccount(account: BankAccount) {
+        accountDao.saveAccount(account.toEntity())
     }
 
     override suspend fun addTransaction(transaction: Transaction) {

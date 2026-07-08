@@ -7,17 +7,24 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 interface BankAccountRepository {
-    fun getAccount(): BankAccount
+    fun observeAccount(): Flow<BankAccount>
     fun observeTransactions(): Flow<List<Transaction>>
+    suspend fun saveAccount(account: BankAccount)
     suspend fun addTransaction(transaction: Transaction)
 }
 
 class InMemoryBankAccountRepository : BankAccountRepository {
-    private val account = BankAccount("Sajad Ali Tavakoli", 150.0)
+    private val account = MutableStateFlow(
+        BankAccount("Sajad Ali Tavakoli", 150.0)
+    )
     private val transactions = MutableStateFlow<List<Transaction>>(emptyList())
 
-    override fun getAccount(): BankAccount {
-        return account
+    override fun observeAccount(): Flow<BankAccount> {
+        return this.account.asStateFlow()
+    }
+
+    override suspend fun saveAccount(account: BankAccount) {
+        this.account.value = account
     }
 
     override fun observeTransactions(): Flow<List<Transaction>> {

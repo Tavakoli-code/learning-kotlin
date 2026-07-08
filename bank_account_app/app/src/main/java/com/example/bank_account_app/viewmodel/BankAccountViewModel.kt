@@ -4,32 +4,45 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.bank_account_app.data.BankAccountRepository
 import com.example.bank_account_app.data.InMemoryBankAccountRepository
+import com.example.bank_account_app.model.BankAccount
 import com.example.bank_account_app.model.Transaction
 import com.example.bank_account_app.model.TransactionResult
 import com.example.bank_account_app.model.TransactionType
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlin.time.Duration.Companion.milliseconds
 
 class BankAccountViewModel(
     private val repository: BankAccountRepository = InMemoryBankAccountRepository()
 ): ViewModel() {
-    private val account = repository.getAccount()
+
+    private var account: BankAccount? = null
 
     private val _uiState = MutableStateFlow(
         BankAccountUiState(
-            owner = account.accountOwner,
-            accountType = account.accountTypeLabel,
-            balanceText = account.displayBalance
+            isLoading = true
         )
     )
 
     val uiState = _uiState.asStateFlow()
 
     init {
+        viewModelScope.launch {
+            repository.observeAccount().collect { latestAccount ->
+                account = latestAccount
+
+                _uiState.update { currentState ->
+                    currentState.copy(
+                        owner = latestAccount.accountOwner,
+                        accountType = latestAccount.accountTypeLabel,
+                        balanceText = latestAccount.displayBalance,
+                        isLoading = false
+                    )
+                }
+            }
+        }
+
         viewModelScope.launch {
             repository.observeTransactions().collect { transactions ->
                 _uiState.update { currentState ->
@@ -41,7 +54,7 @@ class BankAccountViewModel(
 
     private fun handleTransaction(
         amount: Double?,
-        action: (Double) -> TransactionResult,
+        action: (BankAccount, Double) -> TransactionResult,
         successMessage: String,
         transactionType: TransactionType,
         note: String?
@@ -52,8 +65,15 @@ class BankAccountViewModel(
                 message = "Please enter a valid amount"
             )
         }
+
+        val currentAccount = account
+            ?: return BankAccountActionResult(
+                success = false,
+                message = "Account is still loading"
+            )
+
         val now = System.currentTimeMillis()
-        when (val result = action(amount)) {
+        when (val result = action(currentAccount, amount)) {
             is TransactionResult.Success -> {
                 val newTransaction = Transaction(
                     id = now.toString(),
@@ -66,13 +86,15 @@ class BankAccountViewModel(
 
                 viewModelScope.launch {
                     repository.addTransaction(newTransaction)
+                    repository.saveAccount(currentAccount)
                 }
 
                 _uiState.update { currentState ->
                     currentState.copy(
-                        balanceText = account.displayBalance
+                        balanceText = currentAccount.displayBalance
                     )
                 }
+
                 return BankAccountActionResult(
                     success = true,
                     message = successMessage
@@ -90,7 +112,7 @@ class BankAccountViewModel(
     fun deposit(amount: Double?, note: String?): BankAccountActionResult {
         return handleTransaction(
             amount = amount,
-            action = account::deposit,
+            action = { account, value -> account.deposit(value) },
             successMessage = "Deposit successful",
             transactionType = TransactionType.DEPOSIT,
             note = note
@@ -100,7 +122,7 @@ class BankAccountViewModel(
     fun withdraw(amount: Double?, note: String?): BankAccountActionResult {
         return handleTransaction(
             amount = amount,
-            action = account::withdraw,
+            action = { account, value -> account.withdraw(value)},
             successMessage = "Withdraw successful",
             transactionType = TransactionType.WITHDRAW,
             note = note
@@ -108,22 +130,22 @@ class BankAccountViewModel(
     }
 
     fun loadAccount() {
-        viewModelScope.launch {
-            _uiState.update { currentState ->
-                currentState.copy(isLoading = true)
-            }
-
-            delay(1000.milliseconds)
-
-            _uiState.update { currentState ->
-                currentState.copy(
-                    owner = account.accountOwner,
-                    accountType = account.accountTypeLabel,
-                    balanceText = account.displayBalance,
-                    isLoading = false
-                )
-            }
-        }
+//        viewModelScope.launch {
+//            _uiState.update { currentState ->
+//                currentState.copy(isLoading = true)
+//            }
+//
+//            delay(1000.milliseconds)
+//
+//            _uiState.update { currentState ->
+//                currentState.copy(
+//                    owner = account.accountOwner,
+//                    accountType = account.accountTypeLabel,
+//                    balanceText = account.displayBalance,
+//                    isLoading = false
+//                )
+//            }
+//        }
     }
 }
 
