@@ -3,6 +3,7 @@ package com.example.bank_account_app.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.bank_account_app.data.BankAccountRepository
+import com.example.bank_account_app.data.InMemoryBankAccountRepository
 import com.example.bank_account_app.model.Transaction
 import com.example.bank_account_app.model.TransactionResult
 import com.example.bank_account_app.model.TransactionType
@@ -12,8 +13,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class BankAccountViewModel: ViewModel() {
-    val repository = BankAccountRepository()
+class BankAccountViewModel(
+    private val repository: BankAccountRepository = InMemoryBankAccountRepository()
+): ViewModel() {
     private val account = repository.getAccount()
 
     private val _uiState = MutableStateFlow(
