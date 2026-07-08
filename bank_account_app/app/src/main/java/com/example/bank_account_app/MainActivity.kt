@@ -13,7 +13,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.bank_account_app.data.RoomBankAccountRepository
 import com.example.bank_account_app.data.local.DatabaseProvider
-import com.example.bank_account_app.navigation.AppNavigation
 import com.example.bank_account_app.viewmodel.BankAccountViewModel
 
 class MainActivity : ComponentActivity() {
