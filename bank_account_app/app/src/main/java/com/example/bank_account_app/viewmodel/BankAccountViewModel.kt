@@ -129,15 +129,20 @@ class BankAccountViewModel(
         )
     }
 
-    fun resetData(): BankAccountActionResult {
-        viewModelScope.launch {
+    suspend fun resetData(): BankAccountActionResult {
+        return try {
             repository.resetData()
-        }
 
-        return BankAccountActionResult(
-            success = true,
-            message = "Data reset successfully"
-        )
+            BankAccountActionResult(
+                success = true,
+                message = "Data reset successfully"
+            )
+        } catch (e: Exception) {
+            BankAccountActionResult(
+                success = false,
+                message = "Failed to reset data"
+            )
+        }
     }
 }
 

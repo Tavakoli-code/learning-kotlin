@@ -212,8 +212,11 @@ fun BankAccountScreen(
                     TextButton(
                         onClick = {
                             showResetDialog = false
-                            val result = viewModel.resetData()
-                            finishTransaction(result)
+
+                            coroutineScope.launch {
+                                val result = viewModel.resetData()
+                                finishTransaction(result)
+                            }
                         }
                     ) {
                         Text("Reset")

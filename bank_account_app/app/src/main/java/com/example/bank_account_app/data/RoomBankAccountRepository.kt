@@ -14,12 +14,14 @@ class RoomBankAccountRepository(
     private val accountDao: AccountDao
 ) : BankAccountRepository {
 
-    private val defaultAccount = BankAccount("Sajad Ali Tavakoli", 150.0)
+    private fun createDefaultAccount(): BankAccount {
+        return BankAccount("Sajad Ali Tavakoli", 150.0)
+    }
 
     override fun observeAccount(): Flow<BankAccount> {
         return accountDao.observeAccount()
             .map { accountEntity ->
-                accountEntity?.toDomain() ?: defaultAccount
+                accountEntity?.toDomain() ?: createDefaultAccount()
             }
     }
 
