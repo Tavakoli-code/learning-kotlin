@@ -2,6 +2,7 @@ package com.example.bank_account_app.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavType
@@ -13,6 +14,7 @@ import com.example.bank_account_app.screens.BankAccountScreen
 import com.example.bank_account_app.screens.TransactionDetailScreen
 import com.example.bank_account_app.screens.TransactionHistoryScreen
 import com.example.bank_account_app.viewmodel.BankAccountViewModel
+import kotlinx.coroutines.launch
 
 @Composable
 fun AppNavigation(
@@ -21,6 +23,7 @@ fun AppNavigation(
 ) {
     val navController = rememberNavController()
     val uiState by bankAccountViewModel.uiState.collectAsStateWithLifecycle()
+    val coroutineScope = rememberCoroutineScope()
 
     NavHost(
         navController = navController,
@@ -69,6 +72,19 @@ fun AppNavigation(
                 transaction = transaction,
                 onBackClick = {
                     navController.popBackStack()
+                },
+                onDeleteClick = {
+                    transaction?.id?.let { transactionId ->
+                        coroutineScope.launch {
+                            val result = bankAccountViewModel.deleteTransaction(
+                                id = transactionId
+                            )
+
+                            if (result.success) {
+                                navController.popBackStack()
+                            }
+                        }
+                    }
                 }
             )
         }

@@ -144,6 +144,22 @@ class BankAccountViewModel(
             )
         }
     }
+
+    suspend fun deleteTransaction(id: String): BankAccountActionResult {
+        return try {
+            repository.deleteTransaction(id)
+
+            BankAccountActionResult(
+                success = true,
+                message = "Transaction deleted"
+            )
+        } catch (e: Exception) {
+            BankAccountActionResult(
+                success = false,
+                message = "Failed to delete transaction"
+            )
+        }
+    }
 }
 
 data class BankAccountActionResult(

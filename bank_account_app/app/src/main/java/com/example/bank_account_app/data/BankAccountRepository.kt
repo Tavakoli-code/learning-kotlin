@@ -12,6 +12,8 @@ interface BankAccountRepository {
     suspend fun saveAccount(account: BankAccount)
     suspend fun addTransaction(transaction: Transaction)
     suspend fun resetData()
+
+    suspend fun deleteTransaction(id: String)
 }
 
 class InMemoryBankAccountRepository : BankAccountRepository {
@@ -39,5 +41,11 @@ class InMemoryBankAccountRepository : BankAccountRepository {
     override suspend fun resetData() {
         transactions.value = emptyList()
         account.value = BankAccount("Sajad Ali Tavakoli", 150.0)
+    }
+
+    override suspend fun deleteTransaction(id: String) {
+        transactions.value = transactions.value.filter { transaction ->
+            transaction.id != id
+        }
     }
 }
