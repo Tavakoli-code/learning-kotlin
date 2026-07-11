@@ -113,6 +113,9 @@ fun AppNavigation(
             SettingsScreen(
                 onBackClick = {
                     navController.popBackStack()
+                },
+                onResetData = {
+                    bankAccountViewModel.resetData()
                 }
             )
         }

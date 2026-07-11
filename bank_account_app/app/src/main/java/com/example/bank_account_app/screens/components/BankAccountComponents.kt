@@ -171,7 +171,6 @@ fun BankAccountContent(
     onWithdrawClick: () -> Unit,
     onViewHistoryClick: () -> Unit,
     onSettingsClick: () -> Unit,
-    onResetClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -211,13 +210,6 @@ fun BankAccountContent(
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Settings")
-        }
-
-        OutlinedButton(
-            onClick = onResetClick,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Reset Data")
         }
     }
 }

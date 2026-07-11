@@ -2,23 +2,53 @@ package com.example.bank_account_app.screens
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.bank_account_app.screens.components.AppTopBar
+import com.example.bank_account_app.viewmodel.BankAccountActionResult
+import kotlinx.coroutines.launch
 
 @Composable
 fun SettingsScreen(
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    onResetData: suspend () -> BankAccountActionResult
 ) {
+    var showResetDialog by rememberSaveable {
+        mutableStateOf(false)
+    }
+
+    val snackbarHostState = remember {
+        SnackbarHostState()
+    }
+
+    val coroutineScope = rememberCoroutineScope()
+
     Scaffold(
         topBar = {
             AppTopBar(
                 title = "Settings",
                 onBackClick = onBackClick
+            )
+        },
+        snackbarHost = {
+            SnackbarHost(
+                hostState = snackbarHostState
             )
         }
     ) { innerPadding ->
@@ -28,7 +58,58 @@ fun SettingsScreen(
                 .padding(innerPadding)
                 .padding(16.dp)
         ) {
-            Text("Settings content will go here")
+            OutlinedButton(
+                onClick = {
+                    showResetDialog = true
+                },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Reset Data")
+            }
         }
+    }
+
+    if (showResetDialog) {
+        AlertDialog(
+            onDismissRequest = {
+                showResetDialog = false
+            },
+            title = {
+                Text("Reset data?")
+            },
+            text = {
+                Text(
+                    "This will delete all transactions and reset the account balance."
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        coroutineScope.launch {
+                            val result = onResetData()
+
+                            if (result.success) {
+                                showResetDialog = false
+                            }
+
+                            snackbarHostState.showSnackbar(
+                                message = result.message
+                            )
+                        }
+                    }
+                ) {
+                    Text("Reset")
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        showResetDialog = false
+                    }
+                ) {
+                    Text("Cancel")
+                }
+            }
+        )
     }
 }

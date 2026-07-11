@@ -198,42 +198,5 @@ fun BankAccountScreen(
                 }
             )
         }
-
-        if (showResetDialog) {
-            AlertDialog(
-                onDismissRequest = {
-                    showResetDialog = false
-                },
-                title = {
-                    Text("Reset data?")
-                },
-                text = {
-                    Text("This will delete all transactions and reset your balance.")
-                },
-                confirmButton = {
-                    TextButton(
-                        onClick = {
-                            showResetDialog = false
-
-                            coroutineScope.launch {
-                                val result = viewModel.resetData()
-                                finishTransaction(result)
-                            }
-                        }
-                    ) {
-                        Text("Reset")
-                    }
-                },
-                dismissButton = {
-                    TextButton(
-                        onClick = {
-                            showResetDialog = false
-                        }
-                    ) {
-                        Text("Cancel")
-                    }
-                }
-            )
-        }
     }
 }
