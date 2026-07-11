@@ -14,7 +14,9 @@ object DatabaseProvider {
                 context.applicationContext,
                 AppDatabase::class.java,
                 "bank_account_database"
-            ).build().also { createdDatabase ->
+            )
+                .addMigrations(MIGRATION_2_3)
+                .build().also { createdDatabase ->
                 database = createdDatabase
             }
         }

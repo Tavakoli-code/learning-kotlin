@@ -21,6 +21,7 @@ fun Transaction.toEntity(): TransactionEntity {
         amount = amount,
         balanceAfter = balanceAfter,
         createdAt = createdAt,
-        note = note
+        note = note,
+        updatedAt = null
     )
 }

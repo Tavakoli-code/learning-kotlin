@@ -10,5 +10,6 @@ data class TransactionEntity(
     val amount: Double,
     val balanceAfter: Double,
     val createdAt: Long,
-    val note: String?
+    val note: String?,
+    val updatedAt: Long? = null
 )
