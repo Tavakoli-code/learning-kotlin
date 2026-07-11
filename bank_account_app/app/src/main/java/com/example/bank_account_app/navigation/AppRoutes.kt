@@ -7,6 +7,8 @@ object AppRoutes {
     const val TRANSACTION_ID = "transactionId"
     const val TRANSACTION_DETAIL_ROUTE = "$TRANSACTION_DETAIL/{$TRANSACTION_ID}"
 
+    const val SETTINGS = "settings"
+
     fun transactionDetailRoute(id: String): String {
         return "$TRANSACTION_DETAIL/$id"
     }

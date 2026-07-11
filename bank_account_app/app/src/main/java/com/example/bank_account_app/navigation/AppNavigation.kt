@@ -11,6 +11,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.bank_account_app.screens.BankAccountScreen
+import com.example.bank_account_app.screens.SettingsScreen
 import com.example.bank_account_app.screens.TransactionDetailScreen
 import com.example.bank_account_app.screens.TransactionHistoryScreen
 import com.example.bank_account_app.viewmodel.BankAccountActionResult
@@ -34,6 +35,9 @@ fun AppNavigation(
         composable(AppRoutes.BANK_ACCOUNT) {
             BankAccountScreen(
                 viewModel = bankAccountViewModel,
+                onSettingsClick = {
+                    navController.navigate(AppRoutes.SETTINGS)
+                },
                 onViewHistoryClick = {
                     navController.navigate(AppRoutes.TRANSACTION_HISTORY)
                 }
@@ -101,6 +105,14 @@ fun AppNavigation(
                             note = updatedNote
                         )
                     }
+                }
+            )
+        }
+
+        composable(AppRoutes.SETTINGS) {
+            SettingsScreen(
+                onBackClick = {
+                    navController.popBackStack()
                 }
             )
         }

@@ -26,7 +26,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.bank_account_app.model.Transaction
-import com.example.bank_account_app.model.TransactionType
 import com.example.bank_account_app.utils.displayName
 import com.example.bank_account_app.utils.formatAmount
 import com.example.bank_account_app.viewmodel.BankAccountUiState
@@ -171,6 +170,7 @@ fun BankAccountContent(
     onDepositClick: () -> Unit,
     onWithdrawClick: () -> Unit,
     onViewHistoryClick: () -> Unit,
+    onSettingsClick: () -> Unit,
     onResetClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -205,6 +205,13 @@ fun BankAccountContent(
         }
 
         Spacer(Modifier.height(50.dp))
+
+        OutlinedButton(
+            onClick = onSettingsClick,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Settings")
+        }
 
         OutlinedButton(
             onClick = onResetClick,

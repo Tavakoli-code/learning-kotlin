@@ -36,6 +36,7 @@ import kotlinx.coroutines.launch
 fun BankAccountScreen(
     viewModel: BankAccountViewModel,
     onViewHistoryClick: () -> Unit,
+    onSettingsClick: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -151,6 +152,7 @@ fun BankAccountScreen(
                     }
                 },
                 onViewHistoryClick = onViewHistoryClick,
+                onSettingsClick = onSettingsClick,
                 onResetClick = {
                     showResetDialog = true
                 },
