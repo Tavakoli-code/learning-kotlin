@@ -1,12 +1,15 @@
 package com.example.bank_account_app.screens
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -19,8 +22,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.example.bank_account_app.model.AccountType
 import com.example.bank_account_app.screens.components.AppTopBar
 import com.example.bank_account_app.viewmodel.BankAccountActionResult
 import kotlinx.coroutines.launch
@@ -30,25 +35,29 @@ fun SettingsScreen(
     currentOwner: String,
     onBackClick: () -> Unit,
     onResetData: suspend () -> BankAccountActionResult,
-    onUpdateOwner: suspend (String) -> BankAccountActionResult
+    onUpdateOwner: suspend (String) -> BankAccountActionResult,
+    currentAccountType: AccountType,
+    onUpdateAccountType: suspend (AccountType) -> BankAccountActionResult
 ) {
     var showResetDialog by rememberSaveable {
         mutableStateOf(false)
     }
-
     val snackbarHostState = remember {
         SnackbarHostState()
     }
-
     var showEditOwnerDialog by rememberSaveable {
         mutableStateOf(false)
     }
-
     var editedOwner by rememberSaveable(currentOwner) {
         mutableStateOf(currentOwner)
     }
-
     val coroutineScope = rememberCoroutineScope()
+    var showAccountTypeDialog by rememberSaveable {
+        mutableStateOf(false)
+    }
+    var selectedAccountType by rememberSaveable(currentAccountType) {
+        mutableStateOf(currentAccountType)
+    }
 
     Scaffold(
         topBar = {
@@ -86,6 +95,16 @@ fun SettingsScreen(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("Change Account Owner")
+            }
+
+            OutlinedButton(
+                onClick = {
+                    selectedAccountType = currentAccountType
+                    showAccountTypeDialog = true
+                },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Change Account Type")
             }
         }
     }
@@ -185,4 +204,77 @@ fun SettingsScreen(
             }
         )
     }
+
+    if (showAccountTypeDialog) {
+        AlertDialog(
+            onDismissRequest = {
+                showAccountTypeDialog = false
+            },
+            title = {
+                Text("Change account type")
+            },
+            text = {
+                Column {
+                    AccountType.entries.forEach { accountType ->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    selectedAccountType = accountType
+                                }
+                                .padding(vertical = 8.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            RadioButton(
+                                selected = selectedAccountType == accountType,
+                                onClick = {
+                                    selectedAccountType = accountType
+                                }
+                            )
+
+                            Text(
+                                text = when (accountType) {
+                                    AccountType.SAVING -> "Saving account"
+                                    AccountType.CURRENT -> "Current account"
+                                    AccountType.BUSINESS -> "Business account"
+                                },
+                                modifier = Modifier.padding(start = 8.dp)
+                            )
+                        }
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        coroutineScope.launch {
+                            val result = onUpdateAccountType(
+                                selectedAccountType
+                            )
+
+                            if (result.success) {
+                                showAccountTypeDialog = false
+                            }
+
+                            snackbarHostState.showSnackbar(
+                                message = result.message
+                            )
+                        }
+                    }
+                ) {
+                    Text("Save")
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        showAccountTypeDialog = false
+                    }
+                ) {
+                    Text("Cancel")
+                }
+            }
+        )
+    }
+
 }

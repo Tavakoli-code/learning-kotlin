@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.bank_account_app.data.BankAccountRepository
 import com.example.bank_account_app.data.InMemoryBankAccountRepository
+import com.example.bank_account_app.model.AccountType
 import com.example.bank_account_app.model.BankAccount
 import com.example.bank_account_app.model.Transaction
 import com.example.bank_account_app.model.TransactionResult
@@ -37,6 +38,7 @@ class BankAccountViewModel(
                     currentState.copy(
                         owner = latestAccount.accountOwner,
                         accountType = latestAccount.accountTypeLabel,
+                        accountTypeValue = latestAccount.accountType,
                         balanceText = latestAccount.displayBalance,
                         isLoading = false
                     )
@@ -260,6 +262,36 @@ class BankAccountViewModel(
             BankAccountActionResult(
                 success = false,
                 message = "Failed to update account owner"
+            )
+        }
+    }
+
+    suspend fun updateAccountType(
+        accountType: AccountType
+    ): BankAccountActionResult {
+        val currentAccount = account
+            ?: return BankAccountActionResult(
+                success = false,
+                message = "Account is still loading"
+            )
+
+        val updatedAccount = BankAccount(
+            accountOwner = currentAccount.accountOwner,
+            initialBalance = currentAccount.balance,
+            accountType = accountType
+        )
+
+        return try {
+            repository.saveAccount(updatedAccount)
+
+            BankAccountActionResult(
+                success = true,
+                message = "Account type updated"
+            )
+        } catch (e: Exception) {
+            BankAccountActionResult(
+                success = false,
+                message = "Failed to update account type"
             )
         }
     }
