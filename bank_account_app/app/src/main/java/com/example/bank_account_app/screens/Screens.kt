@@ -51,9 +51,6 @@ fun BankAccountScreen(
     var pendingWithdrawNote by rememberSaveable {
         mutableStateOf<String?>(null)
     }
-    var showResetDialog by rememberSaveable {
-        mutableStateOf(false)
-    }
     val snackbarHostState = remember {
         SnackbarHostState()
     }
@@ -153,9 +150,6 @@ fun BankAccountScreen(
                 },
                 onViewHistoryClick = onViewHistoryClick,
                 onSettingsClick = onSettingsClick,
-                onResetClick = {
-                    showResetDialog = true
-                },
                 modifier = Modifier.padding(innerPadding)
             )
         }

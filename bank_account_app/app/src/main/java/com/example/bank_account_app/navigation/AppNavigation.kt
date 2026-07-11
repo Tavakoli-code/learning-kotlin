@@ -111,11 +111,15 @@ fun AppNavigation(
 
         composable(AppRoutes.SETTINGS) {
             SettingsScreen(
+                currentOwner = uiState.owner,
                 onBackClick = {
                     navController.popBackStack()
                 },
                 onResetData = {
                     bankAccountViewModel.resetData()
+                },
+                onUpdateOwner = { newOwner ->
+                    bankAccountViewModel.updateAccountOwner(newOwner)
                 }
             )
         }

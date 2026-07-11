@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -26,8 +27,10 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun SettingsScreen(
+    currentOwner: String,
     onBackClick: () -> Unit,
-    onResetData: suspend () -> BankAccountActionResult
+    onResetData: suspend () -> BankAccountActionResult,
+    onUpdateOwner: suspend (String) -> BankAccountActionResult
 ) {
     var showResetDialog by rememberSaveable {
         mutableStateOf(false)
@@ -35,6 +38,14 @@ fun SettingsScreen(
 
     val snackbarHostState = remember {
         SnackbarHostState()
+    }
+
+    var showEditOwnerDialog by rememberSaveable {
+        mutableStateOf(false)
+    }
+
+    var editedOwner by rememberSaveable(currentOwner) {
+        mutableStateOf(currentOwner)
     }
 
     val coroutineScope = rememberCoroutineScope()
@@ -65,6 +76,16 @@ fun SettingsScreen(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("Reset Data")
+            }
+
+            OutlinedButton(
+                onClick = {
+                    editedOwner = currentOwner
+                    showEditOwnerDialog = true
+                },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Change Account Owner")
             }
         }
     }
@@ -105,6 +126,58 @@ fun SettingsScreen(
                 TextButton(
                     onClick = {
                         showResetDialog = false
+                    }
+                ) {
+                    Text("Cancel")
+                }
+            }
+        )
+    }
+
+    if (showEditOwnerDialog) {
+        AlertDialog(
+            onDismissRequest = {
+                showEditOwnerDialog = false
+            },
+            title = {
+                Text("Change account owner")
+            },
+            text = {
+                OutlinedTextField(
+                    value = editedOwner,
+                    onValueChange = { newValue ->
+                        editedOwner = newValue
+                    },
+                    label = {
+                        Text("Account owner")
+                    },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        coroutineScope.launch {
+                            val result = onUpdateOwner(editedOwner)
+
+                            if (result.success) {
+                                showEditOwnerDialog = false
+                            }
+
+                            snackbarHostState.showSnackbar(
+                                message = result.message
+                            )
+                        }
+                    }
+                ) {
+                    Text("Save")
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        showEditOwnerDialog = false
                     }
                 ) {
                     Text("Cancel")

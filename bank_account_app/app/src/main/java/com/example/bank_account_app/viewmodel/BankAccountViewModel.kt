@@ -224,6 +224,45 @@ class BankAccountViewModel(
             )
         }
     }
+
+    suspend fun updateAccountOwner(
+        owner: String
+    ): BankAccountActionResult {
+        val cleanOwner = owner.trim()
+
+        if (cleanOwner.isBlank()) {
+            return BankAccountActionResult(
+                success = false,
+                message = "Account owner cannot be blank"
+            )
+        }
+
+        val currentAccount = account
+            ?: return BankAccountActionResult(
+                success = false,
+                message = "Account is still loading"
+            )
+
+        val updatedAccount = BankAccount(
+            accountOwner = cleanOwner,
+            initialBalance = currentAccount.balance,
+            accountType = currentAccount.accountType
+        )
+
+        return try {
+            repository.saveAccount(updatedAccount)
+
+            BankAccountActionResult(
+                success = true,
+                message = "Account owner updated"
+            )
+        } catch (e: Exception) {
+            BankAccountActionResult(
+                success = false,
+                message = "Failed to update account owner"
+            )
+        }
+    }
 }
 
 data class BankAccountActionResult(
