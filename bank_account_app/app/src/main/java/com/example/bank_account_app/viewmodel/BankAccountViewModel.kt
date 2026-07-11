@@ -197,6 +197,32 @@ class BankAccountViewModel(
             )
         }
     }
+
+    suspend fun updateTransactionNote(
+        id: String,
+        note: String
+    ): BankAccountActionResult {
+        val cleanNote = note
+            .trim()
+            .takeIf { it.isNotBlank() }
+
+        return try {
+            repository.updateTransactionNote(
+                id = id,
+                note = cleanNote
+            )
+
+            BankAccountActionResult(
+                success = true,
+                message = "Transaction note updated"
+            )
+        } catch (e: Exception) {
+            BankAccountActionResult(
+                success = false,
+                message = "Failed to update transaction note"
+            )
+        }
+    }
 }
 
 data class BankAccountActionResult(

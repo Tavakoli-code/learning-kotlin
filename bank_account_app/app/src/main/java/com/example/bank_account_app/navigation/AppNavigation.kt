@@ -13,6 +13,7 @@ import androidx.navigation.navArgument
 import com.example.bank_account_app.screens.BankAccountScreen
 import com.example.bank_account_app.screens.TransactionDetailScreen
 import com.example.bank_account_app.screens.TransactionHistoryScreen
+import com.example.bank_account_app.viewmodel.BankAccountActionResult
 import com.example.bank_account_app.viewmodel.BankAccountViewModel
 import kotlinx.coroutines.launch
 
@@ -38,6 +39,7 @@ fun AppNavigation(
                 }
             )
         }
+
         composable(AppRoutes.TRANSACTION_HISTORY) {
             TransactionHistoryScreen(
                 transactions = uiState.transactions,
@@ -51,6 +53,7 @@ fun AppNavigation(
                 }
             )
         }
+
         composable(
             route = AppRoutes.TRANSACTION_DETAIL_ROUTE,
             arguments = listOf(
@@ -84,6 +87,19 @@ fun AppNavigation(
                                 navController.popBackStack()
                             }
                         }
+                    }
+                },
+                onUpdateNoteClick = { updatedNote ->
+                    if (transaction == null) {
+                        BankAccountActionResult(
+                            success = false,
+                            message = "Transaction not found"
+                        )
+                    } else {
+                        bankAccountViewModel.updateTransactionNote(
+                            id = transaction.id,
+                            note = updatedNote
+                        )
                     }
                 }
             )

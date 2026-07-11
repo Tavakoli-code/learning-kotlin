@@ -14,6 +14,8 @@ interface BankAccountRepository {
     suspend fun resetData()
 
     suspend fun deleteTransaction(id: String)
+
+    suspend fun updateTransactionNote(id: String, note: String?)
 }
 
 class InMemoryBankAccountRepository : BankAccountRepository {
@@ -46,6 +48,16 @@ class InMemoryBankAccountRepository : BankAccountRepository {
     override suspend fun deleteTransaction(id: String) {
         transactions.value = transactions.value.filter { transaction ->
             transaction.id != id
+        }
+    }
+
+    override suspend fun updateTransactionNote(id: String, note: String?) {
+        transactions.value = transactions.value.map { transaction ->
+            if (transaction.id == id) {
+                transaction.copy(note = note)
+            } else {
+                transaction
+            }
         }
     }
 }

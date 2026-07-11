@@ -19,4 +19,7 @@ interface TransactionDao {
 
     @Query("DELETE FROM transactions WHERE id = :id")
     suspend fun deleteTransaction(id: String)
+
+    @Query("UPDATE transactions SET note = :note WHERE id = :id")
+    suspend fun updateTransactionNote(id: String, note: String?)
 }

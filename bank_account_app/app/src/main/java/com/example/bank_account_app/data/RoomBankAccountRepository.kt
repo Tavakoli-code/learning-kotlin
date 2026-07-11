@@ -50,4 +50,8 @@ class RoomBankAccountRepository(
     override suspend fun deleteTransaction(id: String) {
         transactionDao.deleteTransaction(id)
     }
+
+    override suspend fun updateTransactionNote(id: String, note: String?) {
+        transactionDao.updateTransactionNote(id = id, note = note)
+    }
 }
