@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.util.UUID
 
 class BankAccountViewModel(
     private val repository: BankAccountRepository = InMemoryBankAccountRepository()
@@ -76,7 +77,7 @@ class BankAccountViewModel(
         when (val result = action(currentAccount, amount)) {
             is TransactionResult.Success -> {
                 val newTransaction = Transaction(
-                    id = now.toString(),
+                    id = UUID.randomUUID().toString(),
                     type = transactionType,
                     amount = amount,
                     balanceAfter = result.newBalance,
