@@ -146,8 +146,45 @@ class BankAccountViewModel(
     }
 
     suspend fun deleteTransaction(id: String): BankAccountActionResult {
+        val currentAccount = account
+            ?: return BankAccountActionResult(
+                success = false,
+                message = "Account is still loading"
+            )
+
+        val transaction = _uiState.value.transactions.find {
+            it.id == id
+        } ?: return BankAccountActionResult(
+            success = false,
+            message = "Transaction not found"
+        )
+
+        val latestTransaction = _uiState.value.transactions.firstOrNull()
+
+        if (latestTransaction?.id != transaction.id) {
+            return BankAccountActionResult(
+                success = false,
+                message = "Only the latest transaction can be deleted"
+            )
+        }
+
+        val restoredBalance = when (transaction.type) {
+            TransactionType.DEPOSIT ->
+                transaction.balanceAfter - transaction.amount
+
+            TransactionType.WITHDRAW ->
+                transaction.balanceAfter + transaction.amount
+        }
+
+        val restoredAccount = BankAccount(
+            accountOwner = currentAccount.accountOwner,
+            initialBalance = restoredBalance,
+            accountType = currentAccount.accountType
+        )
+
         return try {
             repository.deleteTransaction(id)
+            repository.saveAccount(restoredAccount)
 
             BankAccountActionResult(
                 success = true,
